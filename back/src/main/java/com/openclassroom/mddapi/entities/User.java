@@ -16,7 +16,8 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "email"),
+        @UniqueConstraint(columnNames = "name")})
 @Data
 @Builder
 @AllArgsConstructor
@@ -38,7 +39,7 @@ public class User implements UserDetails {
     private String password;
 
     @CreatedDate
-    @Column(name ="created_at")
+    @Column(name ="created_at",updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
