@@ -4,6 +4,8 @@ import com.openclassroom.mddapi.dtos.auth.AuthResponse;
 import com.openclassroom.mddapi.dtos.auth.LoginRequest;
 import com.openclassroom.mddapi.dtos.auth.RegisterRequest;
 import com.openclassroom.mddapi.entities.User;
+import com.openclassroom.mddapi.exceptions.BadRequestException;
+import com.openclassroom.mddapi.exceptions.NotFoundException;
 import com.openclassroom.mddapi.repositories.UserRepository;
 import com.openclassroom.mddapi.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,11 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse register(RegisterRequest request) {
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new BadRequestException("Cet email est déjà utilisé !");
+        }
+
         var user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
@@ -44,7 +51,7 @@ public class AuthService {
         );
 
         var user = userRepository.findByEmailOrName(request.getIdentifier(), request.getIdentifier())
-                .orElseThrow();
+                .orElseThrow(() -> new NotFoundException("Utilisateur inconnu"));
 
         var jwtToken = jwtService.generateToken(user);
         return AuthResponse.builder().token(jwtToken).build();
