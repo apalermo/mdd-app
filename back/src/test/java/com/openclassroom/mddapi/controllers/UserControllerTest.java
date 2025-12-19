@@ -32,12 +32,12 @@ class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private UserRepository userRepository; // Pour manipuler la base en direct si besoin
+    private UserRepository userRepository;
 
     @Test
     @DisplayName("Should return authenticated user details when token is valid")
     void shouldReturnAuthenticatedUserDetails() throws Exception {
-        // 1. Inscription
+
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setEmail("me-user@test.com");
         registerRequest.setName("MeUser");
@@ -47,7 +47,7 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerRequest)));
 
-        // 2. Login pour avoir le token
+
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setIdentifier("me-user@test.com");
         loginRequest.setPassword("password123");
@@ -60,12 +60,12 @@ class UserControllerTest {
 
         String token = JsonPath.parse(loginResult.getResponse().getContentAsString()).read("$.token");
 
-        // 3. Appel de /me avec le token
+
         mockMvc.perform(get("/api/users/me")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("me-user@test.com"))
-                .andExpect(jsonPath("$.name").value("MeUser")); // Vérifie bien le nom du champ dans ton UserDto (name ou username)
+                .andExpect(jsonPath("$.name").value("MeUser"));
     }
 
     @Test
@@ -78,11 +78,9 @@ class UserControllerTest {
     @Test
     @DisplayName("Should return 404 Not Found when token is valid but user deleted")
     void shouldReturnNotFoundWhenUserDeleted() throws Exception {
-        // C'est un cas limite très intéressant :
-        // Le token est cryptographiquement valide, mais l'user n'existe plus en BDD.
-        // Comme notre architecture appelle la BDD dans le endpoint /me, on doit avoir une 404.
 
-        // 1. Inscription
+        // Edge case: Valid JWT token but user entity deleted from database.
+        // Ensure API returns 404 Not Found instead of 500 or 401.
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setEmail("deleted-user@test.com");
         registerRequest.setName("DeletedUser");
@@ -92,7 +90,6 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerRequest)));
 
-        // 2. Login
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setIdentifier("deleted-user@test.com");
         loginRequest.setPassword("password123");
@@ -104,15 +101,14 @@ class UserControllerTest {
 
         String token = JsonPath.parse(loginResult.getResponse().getContentAsString()).read("$.token");
 
-        // 3. SUPPRESSION de l'utilisateur (Simulation d'un user supprimé entre temps)
-        // Note: Ici on supprime manuellement en base car on n'a pas encore de endpoint delete
+        // Setup: Manually delete user to simulate data inconsistency
         var user = userRepository.findByEmail("deleted-user@test.com").orElseThrow();
         userRepository.delete(user);
-        userRepository.flush(); // Force la suppression immédiate
+        userRepository.flush();
 
-        // 4. Appel avec le token (qui est toujours valide techniquement !)
+
         mockMvc.perform(get("/api/users/me")
                         .header("Authorization", "Bearer " + token))
-                .andExpect(status().isNotFound()); // Grâce à ton GlobalExceptionHandler
+                .andExpect(status().isNotFound());
     }
 }

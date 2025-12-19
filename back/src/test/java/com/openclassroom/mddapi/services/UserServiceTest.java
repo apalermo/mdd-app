@@ -48,7 +48,7 @@ class UserServiceTest {
         // THEN
         assertThat(result).isNotNull();
         assertThat(result.getEmail()).isEqualTo(email);
-        assertThat(result.getName()).isEqualTo("TestUser"); // ou .getUsername() selon ton DTO
+        assertThat(result.getName()).isEqualTo("TestUser");
 
         verify(userRepository, times(1)).findByEmail(email);
     }

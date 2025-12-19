@@ -55,7 +55,7 @@ class AuthServiceTest {
 
         // THEN
         assertNotNull(response);
-        // Adapte ici selon si ton AuthResponse a un champ "token" ou "accessToken"
+
         assertEquals("jwt-token-exemple", response.getToken());
         verify(userRepository, times(1)).save(any(User.class));
     }
@@ -70,7 +70,7 @@ class AuthServiceTest {
 
         User mockUser = User.builder().email("existing@test.com").password("encodedPass").build();
 
-        when(userRepository.findByEmailOrName(request.getIdentifier(),request.getIdentifier())).thenReturn(Optional.of(mockUser));
+        when(userRepository.findByEmailOrName(request.getIdentifier(), request.getIdentifier())).thenReturn(Optional.of(mockUser));
         when(jwtService.generateToken(mockUser)).thenReturn("jwt-token-login");
 
         // WHEN
@@ -125,7 +125,6 @@ class AuthServiceTest {
         request.setEmail("already@test.com");
         request.setPassword("123456");
 
-        // On simule que l'email existe déjà en base
         when(userRepository.existsByEmail(request.getEmail())).thenReturn(true);
 
         // WHEN & THEN
@@ -133,7 +132,6 @@ class AuthServiceTest {
             authService.register(request);
         });
 
-        // On vérifie qu'on n'a JAMAIS essayé de sauvegarder
         verify(userRepository, never()).save(any(User.class));
     }
 }
