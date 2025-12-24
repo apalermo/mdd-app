@@ -4,7 +4,7 @@ import com.openclassroom.mddapi.dtos.auth.AuthResponse;
 import com.openclassroom.mddapi.dtos.auth.LoginRequest;
 import com.openclassroom.mddapi.dtos.auth.RegisterRequest;
 import com.openclassroom.mddapi.entities.User;
-import com.openclassroom.mddapi.exceptions.BadRequestException;
+import com.openclassroom.mddapi.exceptions.ConflictException;
 import com.openclassroom.mddapi.exceptions.NotFoundException;
 import com.openclassroom.mddapi.repositories.UserRepository;
 import com.openclassroom.mddapi.security.jwt.JwtService;
@@ -26,7 +26,11 @@ public class AuthService {
     public AuthResponse register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new BadRequestException("Cet email est déjà utilisé !");
+            throw new ConflictException("Cet email est déjà utilisé !");
+        }
+
+        if (userRepository.existsByName(request.getName())) {
+            throw new ConflictException("Ce nom d'utilisateur est déjà utilisé !");
         }
 
         var user = User.builder()
