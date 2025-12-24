@@ -1,0 +1,53 @@
+import { Component, inject, signal } from '@angular/core';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+import { SessionService } from '../../../core/services/session.service';
+import { CommonModule } from '@angular/common';
+import { LoginRequest } from '../../../models/auth.interface';
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports: [ReactiveFormsModule, CommonModule],
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
+})
+export class LoginComponent {
+  private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly sessionService = inject(SessionService);
+  private readonly router = inject(Router);
+
+  public errorMessage = signal<string | undefined>(undefined);
+
+  public loginForm = this.fb.group({
+    identifier: ['', [Validators.required]],
+    password: ['', [Validators.required, Validators.minLength(3)]],
+  });
+
+  public onSubmit(): void {
+    if (this.loginForm.valid) {
+      const loginRequest = this.loginForm.value as LoginRequest;
+
+      this.authService.login(loginRequest).subscribe({
+        next: (response) => {
+          this.sessionService.logIn(response.token);
+
+          this.errorMessage.set(undefined);
+
+          this.router.navigate(['/me']);
+        },
+        error: (err) => {
+          if (err.status === 401) {
+            this.errorMessage.set('Identifiants incorrects.');
+          } else {
+            this.errorMessage.set(
+              'Le serveur ne répond pas. Réessaye plus tard.'
+            );
+          }
+        },
+      });
+    }
+  }
+}

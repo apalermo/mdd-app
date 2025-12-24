@@ -1,37 +1,44 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, signal, computed } from '@angular/core';
 import { User } from '../../models/user.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SessionService {
-  public isLogged = false;
-  public sessionInformation: { token: string; user?: User } | undefined;
+  private readonly TOKEN_KEY = 'token';
 
-  private isLoggedSubject = new BehaviorSubject<boolean>(this.isLogged);
+  // État réactif en mémoire
+  public user = signal<User | null>(null);
+  public isLogged = computed(
+    () => !!this.user() || !!localStorage.getItem(this.TOKEN_KEY)
+  );
 
-  public $isLogged(): Observable<boolean> {
-    return this.isLoggedSubject.asObservable();
+  /**
+   * Initialise la session avec le token et nettoie l'ancien utilisateur en mémoire
+   */
+  public logIn(token: string): void {
+    localStorage.setItem(this.TOKEN_KEY, token);
   }
 
-  public logIn(token: string, user: User): void {
-    this.sessionInformation = { token, user };
-    this.isLogged = true;
-    this.next();
-
-    localStorage.setItem('token', token);
+  /**
+   * Met à jour les informations utilisateur en mémoire après l'appel /me
+   */
+  public updateUser(user: User): void {
+    this.user.set(user);
   }
 
+  /**
+   * Déconnexion complète : nettoie le storage et la mémoire
+   */
   public logOut(): void {
-    this.sessionInformation = undefined;
-    this.isLogged = false;
-    this.next();
-
-    localStorage.removeItem('token');
+    localStorage.removeItem(this.TOKEN_KEY);
+    this.user.set(null);
   }
 
-  private next(): void {
-    this.isLoggedSubject.next(this.isLogged);
+  /**
+   * Récupère le token pour l'intercepteur
+   */
+  public getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
   }
 }
