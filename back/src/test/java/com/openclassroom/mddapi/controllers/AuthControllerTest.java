@@ -28,73 +28,77 @@ public class AuthControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @DisplayName("Should register user successfully and return JWT token")
-    void shouldRegisterUserSuccessfully() throws Exception {
-        RegisterRequest request = new RegisterRequest();
-        request.setEmail("test-register@test.com");
-        request.setName("RegisterUser");
-        request.setPassword("password123");
+    @DisplayName("POST /register: Should return 201 Created and JWT token on success")
+    void shouldRegisterSuccessfully() throws Exception {
+        RegisterRequest request = new RegisterRequest("integration@test.com", "IntegrationUser", "password123");
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.token").isNotEmpty());
+    }
+
+    @Test
+    @DisplayName("POST /register: Should return 400 Bad Request for invalid input")
+    void shouldReturn400ForInvalidRegisterInput() throws Exception {
+        RegisterRequest invalidRequest = new RegisterRequest("not-an-email", "", "short");
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").isNotEmpty());
+    }
+
+    @Test
+    @DisplayName("POST /register: Should return 409 Conflict when email or name is already taken")
+    void shouldReturnConflictForDuplicateUser() throws Exception {
+        RegisterRequest request = new RegisterRequest("dup@test.com", "DupUser", "password123");
+        String json = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON).content(json));
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("POST /login: Should return 200 OK and JWT token on success")
+    void shouldLoginSuccessfully() throws Exception {
+        RegisterRequest reg = new RegisterRequest("login@test.com", "LoginUser", "password123");
+        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(reg)));
+
+        LoginRequest login = new LoginRequest("login@test.com", "password123");
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(login)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").isNotEmpty());
     }
 
     @Test
-    @DisplayName("Should return 400 Bad Request when email already exists")
-    void shouldReturnBadRequestWhenEmailAlreadyExists() throws Exception {
-        RegisterRequest request = new RegisterRequest();
-        request.setEmail("duplicate@test.com");
-        request.setName("Doublon");
-        request.setPassword("password123");
-        String jsonRequest = objectMapper.writeValueAsString(request);
+    @DisplayName("POST /login: Should return 400 Bad Request for empty credentials")
+    void shouldReturn400ForEmptyLoginCredentials() throws Exception {
+        LoginRequest invalidRequest = new LoginRequest("", "");
 
-        mockMvc.perform(post("/api/auth/register")
+        mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonRequest))
-                .andExpect(status().isOk());
-
-        mockMvc.perform(post("/api/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonRequest))
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("Should authenticate user successfully and return token")
-    void shouldAuthenticateUserSuccessfully() throws Exception {
-        RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setEmail("login@test.com");
-        registerRequest.setName("LoginUser");
-        registerRequest.setPassword("password123");
-
-        mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerRequest)));
-
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setIdentifier("login@test.com");
-        loginRequest.setPassword("password123");
+    @DisplayName("POST /login: Should return 401 Unauthorized for invalid credentials")
+    void shouldReturnUnauthorizedForBadCredentials() throws Exception {
+        LoginRequest login = new LoginRequest("unknown@test.com", "wrong-pass");
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").isNotEmpty());
-    }
-
-    @Test
-    @DisplayName("Should return 401 Unauthorized when bad credentials")
-    void shouldReturnUnauthorizedWithBadCredentials() throws Exception {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setIdentifier("unknown@test.com");
-        loginRequest.setPassword("wrong-password");
-
-        mockMvc.perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        .content(objectMapper.writeValueAsString(login)))
                 .andExpect(status().isUnauthorized());
     }
 }
