@@ -1,5 +1,6 @@
 package com.openclassroom.mddapi.dtos.auth;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginRequest {
-    private String identifier; // Peut contenir l'email ou le nom
+
+    @NotBlank(message = "L'identifiant est obligatoire")
+    private String identifier;
+
+    @NotBlank(message = "Le mot de passe est obligatoire")
     private String password;
 }

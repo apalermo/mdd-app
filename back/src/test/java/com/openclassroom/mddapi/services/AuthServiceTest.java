@@ -4,6 +4,7 @@ import com.openclassroom.mddapi.dtos.auth.AuthResponse;
 import com.openclassroom.mddapi.dtos.auth.LoginRequest;
 import com.openclassroom.mddapi.dtos.auth.RegisterRequest;
 import com.openclassroom.mddapi.entities.User;
+import com.openclassroom.mddapi.exceptions.ConflictException;
 import com.openclassroom.mddapi.repositories.UserRepository;
 import com.openclassroom.mddapi.security.jwt.JwtService;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -38,100 +40,67 @@ class AuthServiceTest {
     private AuthService authService;
 
     @Test
-    @DisplayName("Should register user successfully")
+    @DisplayName("Register: Should successfully create a user and return a token")
     void shouldRegisterUserSuccessfully() {
-        // GIVEN
-        RegisterRequest request = new RegisterRequest();
-        request.setEmail("new@test.com");
-        request.setName("NewUser");
-        request.setPassword("password123");
+        RegisterRequest request = new RegisterRequest("new@test.com", "NewUser", "password123");
+        User savedUser = User.builder().id(1L).email("new@test.com").name("NewUser").build();
 
-        when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPass");
-        when(userRepository.save(any(User.class))).thenReturn(User.builder().id(1L).email("new@test.com").build());
-        when(jwtService.generateToken(any(User.class))).thenReturn("jwt-token-exemple");
+        when(userRepository.existsByEmail(request.getEmail())).thenReturn(false);
+        when(userRepository.existsByName(request.getName())).thenReturn(false);
+        when(passwordEncoder.encode(anyString())).thenReturn("hashedPassword");
+        when(userRepository.save(any(User.class))).thenReturn(savedUser);
+        when(jwtService.generateToken(any(User.class))).thenReturn("fake-jwt-token");
 
-        // WHEN
         AuthResponse response = authService.register(request);
 
-        // THEN
         assertNotNull(response);
-
-        assertEquals("jwt-token-exemple", response.getToken());
-        verify(userRepository, times(1)).save(any(User.class));
+        assertEquals("fake-jwt-token", response.getToken());
+        verify(userRepository).save(any(User.class));
     }
 
     @Test
-    @DisplayName("Should login user successfully")
-    void shouldAuthenticateUserSuccessfully() {
-        // GIVEN
-        LoginRequest request = new LoginRequest();
-        request.setIdentifier("existing@test.com");
-        request.setPassword("password123");
+    @DisplayName("Register: Should throw ConflictException when email is already taken")
+    void shouldThrowConflictWhenEmailExists() {
+        RegisterRequest request = new RegisterRequest("already@taken.com", "User", "pass");
+        when(userRepository.existsByEmail(request.getEmail())).thenReturn(true);
 
-        User mockUser = User.builder().email("existing@test.com").password("encodedPass").build();
+        assertThrows(ConflictException.class, () -> authService.register(request));
+        verify(userRepository, never()).save(any());
+    }
 
-        when(userRepository.findByEmailOrName(request.getIdentifier(), request.getIdentifier())).thenReturn(Optional.of(mockUser));
-        when(jwtService.generateToken(mockUser)).thenReturn("jwt-token-login");
+    @Test
+    @DisplayName("Register: Should throw ConflictException when username is already taken")
+    void shouldThrowConflictWhenNameExists() {
+        RegisterRequest request = new RegisterRequest("new@test.com", "AlreadyTaken", "pass");
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+        when(userRepository.existsByName(request.getName())).thenReturn(true);
 
-        // WHEN
+        assertThrows(ConflictException.class, () -> authService.register(request));
+    }
+
+    @Test
+    @DisplayName("Login: Should successfully authenticate and return a JWT token")
+    void shouldAuthenticateSuccessfully() {
+        LoginRequest request = new LoginRequest("user@test.com", "password123");
+        User mockUser = User.builder().email("user@test.com").name("User").build();
+
+        when(userRepository.findByEmailOrName(anyString(), anyString())).thenReturn(Optional.of(mockUser));
+        when(jwtService.generateToken(mockUser)).thenReturn("login-token");
+
         AuthResponse response = authService.authenticate(request);
 
-        // THEN
-        assertNotNull(response);
+        assertEquals("login-token", response.getToken());
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
     }
 
     @Test
-    @DisplayName("Should throw BadCredentialsException when password is incorrect")
-    void shouldThrowExceptionWhenCredentialsAreInvalid() {
-        // GIVEN
-        LoginRequest request = new LoginRequest();
-        request.setIdentifier("test@test.com");
-        request.setPassword("wrongPassword");
+    @DisplayName("Login: Should propagate BadCredentialsException on failure")
+    void shouldPropagateAuthenticationError() {
+        LoginRequest request = new LoginRequest("test@test.com", "wrong");
+        when(authenticationManager.authenticate(any()))
+                .thenThrow(new BadCredentialsException("Bad credentials"));
 
-        doThrow(new org.springframework.security.authentication.BadCredentialsException("Bad credentials"))
-                .when(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
-
-        // WHEN & THEN
-        assertThrows(org.springframework.security.authentication.BadCredentialsException.class, () -> {
-            authService.authenticate(request);
-        });
-
+        assertThrows(BadCredentialsException.class, () -> authService.authenticate(request));
         verify(jwtService, never()).generateToken(any());
-    }
-
-    @Test
-    @DisplayName("Should throw NotFoundException when user does not exist during login")
-    void shouldThrowExceptionWhenUserNotFound() {
-        // GIVEN
-        LoginRequest request = new LoginRequest();
-        request.setIdentifier("ghost@test.com");
-        request.setPassword("password123");
-
-
-        when(userRepository.findByEmailOrName(anyString(), anyString())).thenReturn(Optional.empty());
-
-        // WHEN & THEN
-        assertThrows(com.openclassroom.mddapi.exceptions.NotFoundException.class, () -> {
-            authService.authenticate(request);
-        });
-    }
-
-    @Test
-    @DisplayName("Should throw BadRequestException when email is already taken")
-    void shouldThrowExceptionWhenEmailExists() {
-        // GIVEN
-        RegisterRequest request = new RegisterRequest();
-        request.setEmail("already@test.com");
-        request.setPassword("123456");
-
-        when(userRepository.existsByEmail(request.getEmail())).thenReturn(true);
-
-        // WHEN & THEN
-        assertThrows(com.openclassroom.mddapi.exceptions.BadRequestException.class, () -> {
-            authService.register(request);
-        });
-
-        verify(userRepository, never()).save(any(User.class));
     }
 }
