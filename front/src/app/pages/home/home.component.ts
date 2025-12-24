@@ -1,16 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
+  standalone: true,
+  imports: [RouterModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
-  constructor() {}
+export class HomeComponent {
+  private readonly router = inject(Router);
 
-  ngOnInit(): void {}
+  public navigateToLogin(): void {
+    this.router.navigate(['/login']);
+  }
 
-  start() {
-    alert('Commencez par lire le README et à vous de jouer !');
+  public navigateToRegister(): void {
+    this.router.navigate(['/register']);
   }
 }
