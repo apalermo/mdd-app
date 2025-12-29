@@ -5,7 +5,7 @@ import {
   LoginRequest,
   RegisterRequest,
 } from '../../models/auth.interface';
-import { Observable } from 'rxjs/internal/Observable';
+import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

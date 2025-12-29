@@ -21,7 +21,7 @@ describe('SessionService', () => {
 
   it('should start with user not logged in', () => {
     expect(service.isLogged()).toBeFalsy();
-    expect(service.user()).toBeNull();
+    expect(service.user()).toBeUndefined();
   });
 
   it('should log in user and store token', () => {
@@ -54,7 +54,7 @@ describe('SessionService', () => {
 
     service.logOut();
 
-    expect(service.user()).toBeNull();
+    expect(service.user()).toBeUndefined();
     expect(service.isLogged()).toBeFalsy();
     expect(localStorage.getItem('token')).toBeNull();
   });
