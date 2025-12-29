@@ -43,7 +43,7 @@ export class LoginComponent {
             this.errorMessage.set('Identifiants incorrects.');
           } else {
             this.errorMessage.set(
-              'Le serveur ne répond pas. Réessaye plus tard.'
+              'Le serveur ne répond pas. Réessayez plus tard.'
             );
           }
         },

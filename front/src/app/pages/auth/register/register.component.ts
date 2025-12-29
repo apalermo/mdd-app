@@ -3,6 +3,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
+import { RegisterRequest } from '../../../models/auth.interface';
 
 @Component({
   selector: 'app-register',
@@ -26,7 +27,7 @@ export class RegisterComponent {
 
   public onSubmit(): void {
     if (this.registerForm.valid) {
-      const registerRequest = this.registerForm.value as any;
+      const registerRequest = this.registerForm.value as RegisterRequest;
 
       this.authService.register(registerRequest).subscribe({
         next: () => {
