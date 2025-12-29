@@ -12,6 +12,13 @@
     img { width: 24px; }
   }
 
+  .error-message {
+      color: #dc3545;
+      font-size: 0.85rem;
+      margin: 0;
+      text-align: center;
+    }
+
   form {
     width: 100%;
     max-width: 400px;

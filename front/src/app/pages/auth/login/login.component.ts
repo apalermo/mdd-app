@@ -1,15 +1,15 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { SessionService } from '../../../core/services/session.service';
-import { CommonModule } from '@angular/common';
 import { LoginRequest } from '../../../models/auth.interface';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
@@ -18,6 +18,7 @@ export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly sessionService = inject(SessionService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   public errorMessage = signal<string | undefined>(undefined);
 
@@ -30,24 +31,27 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       const loginRequest = this.loginForm.value as LoginRequest;
 
-      this.authService.login(loginRequest).subscribe({
-        next: (response) => {
-          this.sessionService.logIn(response.token);
+      this.authService
+        .login(loginRequest)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (response) => {
+            this.sessionService.logIn(response.token);
 
-          this.errorMessage.set(undefined);
+            this.errorMessage.set(undefined);
 
-          this.router.navigate(['/me']);
-        },
-        error: (err) => {
-          if (err.status === 401) {
-            this.errorMessage.set('Identifiants incorrects.');
-          } else {
-            this.errorMessage.set(
-              'Le serveur ne répond pas. Réessayez plus tard.'
-            );
-          }
-        },
-      });
+            this.router.navigate(['/me']);
+          },
+          error: (err) => {
+            if (err.status === 401) {
+              this.errorMessage.set('Identifiants incorrects.');
+            } else {
+              this.errorMessage.set(
+                'Le serveur ne répond pas. Réessayez plus tard.'
+              );
+            }
+          },
+        });
     }
   }
 }

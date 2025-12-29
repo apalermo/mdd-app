@@ -1,14 +1,14 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { CommonModule } from '@angular/common';
 import { RegisterRequest } from '../../../models/auth.interface';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
 })
@@ -16,6 +16,7 @@ export class RegisterComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   public errorMessage = signal<string | undefined>(undefined);
 
@@ -29,23 +30,26 @@ export class RegisterComponent {
     if (this.registerForm.valid) {
       const registerRequest = this.registerForm.value as RegisterRequest;
 
-      this.authService.register(registerRequest).subscribe({
-        next: () => {
-          this.errorMessage.set(undefined);
-          this.router.navigate(['/login']);
-        },
-        error: (err) => {
-          if (err.status === 400) {
-            this.errorMessage.set(
-              "Ce nom d'utilisateur ou cet e-mail est déjà utilisé."
-            );
-          } else {
-            this.errorMessage.set(
-              "Une erreur est survenue lors de l'inscription. Réessayez plus tard."
-            );
-          }
-        },
-      });
+      this.authService
+        .register(registerRequest)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            this.errorMessage.set(undefined);
+            this.router.navigate(['/login']);
+          },
+          error: (err) => {
+            if (err.status === 400) {
+              this.errorMessage.set(
+                "Ce nom d'utilisateur ou cet e-mail est déjà utilisé."
+              );
+            } else {
+              this.errorMessage.set(
+                "Une erreur est survenue lors de l'inscription. Réessayez plus tard."
+              );
+            }
+          },
+        });
     }
   }
 }
