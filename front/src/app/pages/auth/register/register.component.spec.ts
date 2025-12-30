@@ -4,6 +4,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { RegisterRequest } from '../../../models/auth.interface';
+import { SessionService } from '../../../core/services/session.service';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
@@ -11,6 +12,7 @@ describe('RegisterComponent', () => {
   let router: Router;
 
   const mockAuthService = { register: vi.fn() };
+  const mockSessionService = { logIn: vi.fn() };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -18,6 +20,7 @@ describe('RegisterComponent', () => {
       providers: [
         provideRouter([]),
         { provide: AuthService, useValue: mockAuthService },
+        { provide: SessionService, useValue: mockSessionService },
       ],
     }).compileComponents();
 
@@ -35,21 +38,24 @@ describe('RegisterComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call authService and navigate to login on success', () => {
+  it('should call authService, log user automatically and navigate to /me', () => {
     const navigateSpy = vi.spyOn(router, 'navigate');
     const validRequest: RegisterRequest = {
       email: 'new@test.com',
       name: 'NewUser',
       password: 'password123',
     };
-
+    const mockResponse = { token: 'new-token-123' };
     component.registerForm.setValue(validRequest);
-    mockAuthService.register.mockReturnValue(of({}));
+
+    mockAuthService.register.mockReturnValue(of(mockResponse));
 
     component.onSubmit();
 
     expect(mockAuthService.register).toHaveBeenCalledWith(validRequest);
-    expect(navigateSpy).toHaveBeenCalledWith(['/login']);
+    expect(mockSessionService.logIn).toHaveBeenCalledWith(mockResponse.token);
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/me']); // penser à modifier pour /articles
     expect(component.errorMessage()).toBeUndefined();
   });
 

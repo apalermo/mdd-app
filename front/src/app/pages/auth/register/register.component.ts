@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { RegisterRequest } from '../../../models/auth.interface';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { SessionService } from '../../../core/services/session.service';
 
 @Component({
   selector: 'app-register',
@@ -17,6 +18,7 @@ export class RegisterComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly sessionService = inject(SessionService);
 
   public errorMessage = signal<string | undefined>(undefined);
 
@@ -34,9 +36,10 @@ export class RegisterComponent {
         .register(registerRequest)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
-          next: () => {
+          next: (response) => {
+            this.sessionService.logIn(response.token);
             this.errorMessage.set(undefined);
-            this.router.navigate(['/login']);
+            this.router.navigate(['/me']);
           },
           error: (err) => {
             if (err.status === 400) {
