@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MeComponent } from './me.component';
 import { UserService } from '../../core/services/user.service';
 import { SessionService } from '../../core/services/session.service';
-import { provideRouter } from '@angular/router';
-import { of, Subject } from 'rxjs';
+import { provideRouter, Router } from '@angular/router';
+import { of, Subject, throwError } from 'rxjs';
 import { User } from '../../models/user.interface';
 import { signal } from '@angular/core';
 import { By } from '@angular/platform-browser';
@@ -11,6 +11,7 @@ import { By } from '@angular/platform-browser';
 describe('MeComponent', () => {
   let component: MeComponent;
   let fixture: ComponentFixture<MeComponent>;
+  let router: Router;
 
   const mockUserService = {
     me: vi.fn(),
@@ -20,6 +21,7 @@ describe('MeComponent', () => {
   const mockSessionService = {
     user: userSignal,
     updateUser: vi.fn((u: User) => userSignal.set(u)),
+    logOut: vi.fn(),
   };
 
   const mockUser: User = {
@@ -42,6 +44,7 @@ describe('MeComponent', () => {
 
     fixture = TestBed.createComponent(MeComponent);
     component = fixture.componentInstance;
+    router = TestBed.inject(Router);
     userSignal.set(undefined);
   });
 
@@ -74,5 +77,24 @@ describe('MeComponent', () => {
     expect(loadingElement.nativeElement.textContent).toContain(
       'Chargement de vos informations...'
     );
+  });
+
+  it('should handle error when fetching user data fails', () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    mockUserService.me.mockReturnValue(throwError(() => new Error('Oups')));
+
+    fixture.detectChanges();
+
+    expect(consoleSpy).toHaveBeenCalled();
+    consoleSpy.mockRestore();
+  });
+
+  it('should log out and navigate to root', () => {
+    const navigateSpy = vi.spyOn(router, 'navigate');
+
+    component.logOut();
+
+    expect(mockSessionService.logOut).toHaveBeenCalled();
+    expect(navigateSpy).toHaveBeenCalledWith(['/']);
   });
 });

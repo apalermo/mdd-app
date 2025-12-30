@@ -3,7 +3,10 @@
     <img src="back-arrow.png" alt="Retour" />
   </a>
 
-  <h2>Profil utilisateur</h2>
+  <div class="header-actions">
+    <h2>Profil utilisateur</h2>
+    <button (click)="logOut()" class="btn-logout">Se déconnecter</button>
+  </div>
 
   @if (user()) {
   <div class="profile-card">

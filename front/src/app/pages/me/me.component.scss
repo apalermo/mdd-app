@@ -68,6 +68,33 @@
   }
 }
 
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 20px;
+  
+  h2 { margin: 0; }
+
+  .btn-logout {
+    background-color: transparent;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: #dc3545;
+      color: white;
+    }
+  }
+}
+
 @media (max-width: 576px) {
   .profile-container {
     padding-top: 80px;
