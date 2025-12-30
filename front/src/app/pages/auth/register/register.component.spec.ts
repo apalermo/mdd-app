@@ -5,6 +5,7 @@ import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { RegisterRequest } from '../../../models/auth.interface';
 import { SessionService } from '../../../core/services/session.service';
+import { By } from '@angular/platform-browser';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
@@ -91,5 +92,12 @@ describe('RegisterComponent', () => {
     expect(component.errorMessage()).toBe(
       "Une erreur est survenue lors de l'inscription. Réessayez plus tard."
     );
+  });
+
+  it('should have a link to login page', () => {
+    const registerLink = fixture.debugElement.query(
+      By.css('a[routerLink="/login"]')
+    );
+    expect(registerLink).toBeTruthy();
   });
 });

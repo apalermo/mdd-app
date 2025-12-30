@@ -5,6 +5,7 @@ import { SessionService } from '../../../core/services/session.service';
 import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { LoginRequest } from '../../../models/auth.interface';
+import { By } from '@angular/platform-browser';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -78,5 +79,12 @@ describe('LoginComponent', () => {
     expect(component.errorMessage()).toBe(
       'Le serveur ne répond pas. Réessayez plus tard.'
     );
+  });
+
+  it('should have a link to register page', () => {
+    const registerLink = fixture.debugElement.query(
+      By.css('a[routerLink="/register"]')
+    );
+    expect(registerLink).toBeTruthy();
   });
 });
