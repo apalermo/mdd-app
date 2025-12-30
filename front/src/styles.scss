@@ -1,3 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.auth-links {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  
+  a {
+    color: #7963FF;
+    text-decoration: none;
+    font-weight: 600;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

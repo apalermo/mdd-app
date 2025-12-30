@@ -1,0 +1,28 @@
+<div class="profile-container">
+  <a routerLink="/articles" class="back-button">
+    <img src="back-arrow.png" alt="Retour" />
+  </a>
+
+  <div class="header-actions">
+    <h2>Profil utilisateur</h2>
+    <button (click)="logOut()" class="btn-logout">Se déconnecter</button>
+  </div>
+
+  @if (user()) {
+  <div class="profile-card">
+    <div class="info-group">
+      <label>Nom d'utilisateur</label>
+      <p class="info-value">{{ user()?.name }}</p>
+    </div>
+
+    <div class="info-group">
+      <label>Adresse e-mail</label>
+      <p class="info-value">{{ user()?.email }}</p>
+    </div>
+  </div>
+  } @else {
+  <div class="loading">
+    <p>Chargement de vos informations...</p>
+  </div>
+  }
+</div>
