@@ -39,7 +39,7 @@ export class RegisterComponent {
           next: (response) => {
             this.sessionService.logIn(response.token);
             this.errorMessage.set(undefined);
-            this.router.navigate(['/me']);
+            this.router.navigate(['/me']); // TODO: Redirect to /articles once the feature is implemented
           },
           error: (err) => {
             if (err.status === 400) {

@@ -54,7 +54,7 @@ describe('LoginComponent', () => {
     expect(mockAuthService.login).toHaveBeenCalledWith(validRequest);
     expect(mockSessionService.logIn).toHaveBeenCalledWith(mockToken);
     expect(component.errorMessage()).toBeUndefined();
-    expect(navigateSpy).toHaveBeenCalledWith(['/me']);
+    expect(navigateSpy).toHaveBeenCalledWith(['/me']); // TODO: Redirect to /articles once the feature is implemented
   });
 
   it('should set error message on 401 Unauthorized', () => {

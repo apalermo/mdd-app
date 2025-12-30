@@ -55,7 +55,7 @@ describe('RegisterComponent', () => {
     expect(mockAuthService.register).toHaveBeenCalledWith(validRequest);
     expect(mockSessionService.logIn).toHaveBeenCalledWith(mockResponse.token);
 
-    expect(navigateSpy).toHaveBeenCalledWith(['/me']); // penser à modifier pour /articles
+    expect(navigateSpy).toHaveBeenCalledWith(['/me']); // TODO: Redirect to /articles once the feature is implemented
     expect(component.errorMessage()).toBeUndefined();
   });
 
