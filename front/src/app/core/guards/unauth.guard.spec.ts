@@ -60,6 +60,6 @@ describe('unauthGuard', () => {
     );
 
     expect(result).toBe(false);
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/me']); // penser à remplacer par articles
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/me']); // TODO: Redirect to /articles once the feature is implemented
   });
 });
