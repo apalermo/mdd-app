@@ -20,6 +20,27 @@
       <p class="info-value">{{ user()?.email }}</p>
     </div>
   </div>
+
+  <div class="subscriptions-section">
+    <h3>Abonnements</h3>
+
+    <div class="subscriptions-grid">
+      @for (sub of user()?.subscriptions; track sub.id) {
+      <div class="subscription-item">
+        <div class="sub-info">
+          <span class="sub-title">{{ sub.title }}</span>
+          <span class="sub-desc">{{ sub.description }}</span>
+        </div>
+        <button class="unsubscribe-btn" (click)="unsubscribe(sub.id)">
+          Se désabonner
+        </button>
+      </div>
+      } @empty {
+      <p class="no-subs">Vous n'êtes abonné à aucun thème.</p>
+      }
+    </div>
+  </div>
+
   } @else {
   <div class="loading">
     <p>Chargement de vos informations...</p>

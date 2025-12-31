@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserService } from '../../core/services/user.service';
 import { SessionService } from '../../core/services/session.service';
+import { ThemeService } from '../../core/services/theme.service'; // <--- Import
 
 @Component({
   selector: 'app-me',
@@ -14,12 +15,31 @@ import { SessionService } from '../../core/services/session.service';
 export class MeComponent implements OnInit {
   private readonly userService = inject(UserService);
   private readonly sessionService = inject(SessionService);
+  private readonly themeService = inject(ThemeService); // <--- Inject
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   public user = this.sessionService.user;
 
   ngOnInit(): void {
+    this.fetchUser();
+  }
+
+  public logOut(): void {
+    this.sessionService.logOut();
+    this.router.navigate(['/']);
+  }
+
+  public unsubscribe(themeId: number): void {
+    this.themeService
+      .unsubscribe(themeId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.fetchUser();
+      });
+  }
+
+  private fetchUser(): void {
     this.userService
       .me()
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -31,10 +51,5 @@ export class MeComponent implements OnInit {
           console.error('Erreur lors de la récupération du profil', err);
         },
       });
-  }
-
-  public logOut(): void {
-    this.sessionService.logOut();
-    this.router.navigate(['/']);
   }
 }
