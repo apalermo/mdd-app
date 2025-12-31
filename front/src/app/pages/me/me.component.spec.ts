@@ -28,6 +28,7 @@ describe('MeComponent', () => {
     id: 1,
     email: 'test@test.com',
     name: 'SuperDev',
+    subscriptions: [],
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };

@@ -32,6 +32,7 @@ describe('UserService', () => {
       id: 1,
       email: 'test@test.com',
       name: 'SuperDev',
+      subscriptions: [],
       created_at: '2025-01-01',
       updated_at: '2025-01-01',
     };
