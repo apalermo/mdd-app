@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -27,6 +28,9 @@ public class UserDto {
     @NotBlank(message = "Le nom d'utilisateur est obligatoire")
     @Size(min = 3, max = 50, message = "Le nom doit contenir entre 3 et 50 caractères")
     private String name;
+
+    @Builder.Default
+    private List<ThemeDto> subscriptions = List.of();
 
     @JsonProperty("created_at")
     private LocalDateTime createdAt;
