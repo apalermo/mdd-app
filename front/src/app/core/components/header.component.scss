@@ -1,0 +1,144 @@
+$mobile-breakpoint: 768px;
+$primary-color: var(--primary-color, #7963FF);
+$danger-color: var(--danger-color, #dc3545);
+$text-color: var(--text-dark, #333);
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  background-color: white;
+ 
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+  position: relative;
+  z-index: 100;
+  height: 60px;
+
+  .logo-container {
+    .logo {
+      height: 40px;
+      width: auto;
+      display: block;
+    }
+  }
+ 
+  .navigation {
+    ul {
+      display: flex;
+      list-style: none;
+      gap: 30px;
+      margin: 0;
+      padding: 0;
+      align-items: center;
+
+      a {
+        text-decoration: none;
+        color: $text-color;
+        font-weight: 500;
+        cursor: pointer;
+        transition: color 0.2s;
+
+        &:hover, &.active-link {
+          color: $primary-color;
+        }
+
+        .user-icon {
+            font-size: 1.2rem;
+        }
+      }
+
+      .logout-link {
+        color: $danger-color; 
+        cursor: pointer;
+        font-weight: 500;
+        transition: opacity 0.2s;
+        
+        &:hover { opacity: 0.8; }
+      }
+    }
+  }
+
+  .burger-btn { display: none; }
+  .overlay { display: none; }
+}
+
+
+@media (max-width: $mobile-breakpoint) {
+  .main-header {
+    
+    .burger-btn {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 21px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      z-index: 101;
+
+      .bar {
+        width: 100%;
+        height: 3px;
+        background-color: $text-color;
+        border-radius: 10px;
+      }
+    }
+
+    .navigation {
+      position: fixed;
+      top: 0;
+      right: -280px;
+      width: 250px;
+      height: 100vh;
+      background: white;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      padding: 80px 20px 20px; 
+      transition: right 0.3s ease-in-out;
+      z-index: 200;
+
+      &.active {
+        right: 0;
+      }
+
+      ul {
+        flex-direction: column;
+        width: 100%;
+        gap: 0;
+
+        li {
+          width: 100%;
+          border-bottom: 1px solid #f0f0f0;
+        }
+
+        a, .logout-link {
+          display: block;
+          padding: 15px 0;
+          font-size: 1.1rem;
+          width: 100%;
+        }
+      }
+    }
+
+    .overlay {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 150;
+      animation: fadeIn 0.3s forwards;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

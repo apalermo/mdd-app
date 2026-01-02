@@ -1,0 +1,52 @@
+<header class="main-header">
+  <div class="logo-container">
+    <a routerLink="showNavigation() ? '/articles' : '/'" (click)="closeMenu()">
+      <img src="logo.png" alt="MDD Logo" class="logo" />
+    </a>
+  </div>
+
+  @if (sessionService.isLogged() && showNavigation()) {
+
+  <button
+    class="burger-btn"
+    (click)="toggleMobileMenu()"
+    [attr.aria-expanded]="isMobileMenuOpen()"
+    aria-label="Ouvrir le menu de navigation"
+  >
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </button>
+
+  <nav class="navigation" [class.active]="isMobileMenuOpen()">
+    <ul>
+      @for (link of navLinks; track link.label) {
+      <li>
+        <a
+          [routerLink]="link.url"
+          routerLinkActive="active-link"
+          (click)="closeMenu()"
+        >
+          {{ link.label }}
+        </a>
+      </li>
+      }
+      <li>
+        <a
+          routerLink="/me"
+          routerLinkActive="active-link"
+          (click)="closeMenu()"
+        >
+          <span class="user-icon" aria-hidden="true">👤</span> Profil
+        </a>
+      </li>
+      <li>
+        <span class="logout-link" (click)="logOut()">Se déconnecter</span>
+      </li>
+    </ul>
+  </nav>
+
+  @if (isMobileMenuOpen()) {
+  <div class="overlay" (click)="toggleMobileMenu()" aria-hidden="true"></div>
+  } }
+</header>
