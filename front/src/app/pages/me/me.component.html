@@ -1,11 +1,10 @@
 <div class="profile-container">
   <a routerLink="/articles" class="back-button">
-    <img src="back-arrow.png" alt="Retour" />
+    <span class="arrow-icon">←</span>
   </a>
 
   <div class="header-actions">
     <h2>Profil utilisateur</h2>
-    <button (click)="logOut()" class="btn-logout">Se déconnecter</button>
   </div>
 
   @if (user()) {
