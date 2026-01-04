@@ -43,7 +43,7 @@ describe('ThemeService', () => {
   it('should subscribe to a theme via POST /api/themes/:id/subscribe', () => {
     const themeId = 1;
 
-    service.subscribe(themeId).subscribe((response) => {
+    service.subscribeToTheme(themeId).subscribe((response) => {
       expect(response).toBeTruthy();
     });
 
