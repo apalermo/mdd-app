@@ -44,6 +44,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/me/me.component').then((m) => m.MeComponent),
       },
+      {
+        path: 'themes',
+        loadComponent: () =>
+          import('./pages/themes/themes.component').then(
+            (m) => m.ThemesComponent
+          ),
+      },
     ],
   },
 

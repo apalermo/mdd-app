@@ -20,7 +20,7 @@ export class HeaderComponent {
 
   public readonly navLinks: NavigationLink[] = [
     // { label: 'Articles', url: '/articles' }, // TODO: Décommenter quand la feature Articles sera prête
-    // { label: 'Thèmes', url: '/themes' },  // TODO: Décommenter quand la feature Themes sera prête
+    { label: 'Thèmes', url: '/themes' },
   ];
 
   public isMobileMenuOpen = signal(false);

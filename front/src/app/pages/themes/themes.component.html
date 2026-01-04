@@ -1,0 +1,26 @@
+<div class="themes-container">
+  <div class="themes-grid">
+    @for (theme of (themes$ | async); track theme.id) {
+
+    <div class="theme-card">
+      <div class="card-content">
+        <h3>{{ theme.title }}</h3>
+        <p class="description">{{ theme.description }}</p>
+      </div>
+
+      <div class="card-actions">
+        @if (isSubscribed(theme.id)) {
+        <button class="btn-subscribed" disabled>Déjà abonné</button>
+        } @else {
+        <button class="btn-subscribe" (click)="subscribe(theme.id)">
+          S'abonner
+        </button>
+        }
+      </div>
+    </div>
+
+    } @empty {
+    <p>Aucun thème disponible.</p>
+    }
+  </div>
+</div>

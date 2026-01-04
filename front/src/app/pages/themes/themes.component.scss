@@ -1,0 +1,29 @@
+.themes-container { padding: 20px 0; }
+.themes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+  gap: 20px;
+}
+.theme-card {
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  
+  h3 { margin-top: 0; font-size: 1.2rem; color: #333; }
+  .description { color: #666; font-size: 0.9rem; line-height: 1.5; }
+  
+  .card-actions {
+    margin-top: 20px;
+    button {
+      width: 100%; padding: 10px; border-radius: 4px; border: none; cursor: pointer;
+      &.btn-subscribe { background-color: var(--primary-color); color: white; }
+      &.btn-subscribed { background-color: #eee; color: #888; cursor: default; border: 1px solid #ddd; }
+    }
+  }
+}
