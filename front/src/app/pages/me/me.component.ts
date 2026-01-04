@@ -1,8 +1,8 @@
 import { Component, inject, DestroyRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AsyncPipe } from '@angular/common'; // <--- Import nécessaire
+import { AsyncPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, switchMap, tap } from 'rxjs'; // <--- Opérateurs RxJS
+import { BehaviorSubject, switchMap, tap } from 'rxjs';
 import { UserService } from '../../core/services/user.service';
 import { SessionService } from '../../core/services/session.service';
 import { ThemeService } from '../../core/services/theme.service';
@@ -10,7 +10,7 @@ import { ThemeService } from '../../core/services/theme.service';
 @Component({
   selector: 'app-me',
   standalone: true,
-  imports: [RouterLink, AsyncPipe], // Ajout du Pipe
+  imports: [RouterLink, AsyncPipe],
   templateUrl: './me.component.html',
   styleUrls: ['./me.component.scss'],
 })

@@ -55,8 +55,8 @@ describe('HeaderComponent', () => {
 
     const hrefs = links.map((l) => l.nativeElement.getAttribute('href'));
 
-    /* expect(hrefs).toContain('/articles');
-    expect(hrefs).toContain('/themes');*/ // TODO: Décommenter quand la feature Articles sera prête
+    /* expect(hrefs).toContain('/articles');*/ // TODO: Décommenter quand la feature Articles sera prête
+    expect(hrefs).toContain('/themes');
     expect(hrefs).toContain('/me');
   });
 

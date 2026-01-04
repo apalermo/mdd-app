@@ -13,8 +13,6 @@ describe('MeComponent', () => {
   let component: MeComponent;
   let fixture: ComponentFixture<MeComponent>;
 
-  // ... (Tes mocks existants mockUser, mockUserService, etc. restent identiques) ...
-  // Je remets juste les nécessaires pour le contexte :
   const mockUser: User = {
     id: 1,
     email: 't@t.com',
@@ -45,7 +43,6 @@ describe('MeComponent', () => {
     fixture = TestBed.createComponent(MeComponent);
     component = fixture.componentInstance;
 
-    // IMPORTANT : Avec AsyncPipe, c'est le detectChanges qui déclenche la souscription !
     fixture.detectChanges();
   });
 
@@ -58,23 +55,18 @@ describe('MeComponent', () => {
   });
 
   it('should display user info via AsyncPipe', () => {
-    // Vérifie que le service a été appelé automatiquement via le pipe async
     expect(mockUserService.me).toHaveBeenCalled();
 
-    // Vérifie le rendu HTML
     const nameEl = fixture.debugElement.query(By.css('.info-value'));
     expect(nameEl.nativeElement.textContent).toContain('Dev');
   });
 
   it('should refresh data when clicking unsubscribe', () => {
-    // GIVEN
-    expect(mockUserService.me).toHaveBeenCalledTimes(1); // Appel initial
+    expect(mockUserService.me).toHaveBeenCalledTimes(1);
 
-    // WHEN
     const btn = fixture.debugElement.query(By.css('.unsubscribe-btn'));
     btn.nativeElement.click();
 
-    // THEN
     expect(mockThemeService.unsubscribe).toHaveBeenCalledWith(10);
     expect(mockUserService.me).toHaveBeenCalledTimes(2); // Le refresh$ a déclenché un nouvel appel
   });
