@@ -1,6 +1,8 @@
-import { Component, OnInit, inject, DestroyRef } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, inject, DestroyRef } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { AsyncPipe } from '@angular/common'; // <--- Import nécessaire
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { BehaviorSubject, switchMap, tap } from 'rxjs'; // <--- Opérateurs RxJS
 import { UserService } from '../../core/services/user.service';
 import { SessionService } from '../../core/services/session.service';
 import { ThemeService } from '../../core/services/theme.service';
@@ -8,43 +10,34 @@ import { ThemeService } from '../../core/services/theme.service';
 @Component({
   selector: 'app-me',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, AsyncPipe], // Ajout du Pipe
   templateUrl: './me.component.html',
   styleUrls: ['./me.component.scss'],
 })
-export class MeComponent implements OnInit {
+export class MeComponent {
   private readonly userService = inject(UserService);
   private readonly sessionService = inject(SessionService);
   private readonly themeService = inject(ThemeService);
-  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  public user = this.sessionService.user;
+  private refresh$ = new BehaviorSubject<void>(void 0);
 
-  ngOnInit(): void {
-    this.fetchUser();
-  }
-
-  private fetchUser(): void {
-    this.userService
-      .me()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (userData) => {
-          this.sessionService.updateUser(userData);
-        },
-        error: (err) => {
-          console.error('Erreur lors de la récupération du profil', err);
-        },
-      });
-  }
+  public user$ = this.refresh$.pipe(
+    switchMap(() => this.userService.me()),
+    tap((user) => this.sessionService.updateUser(user))
+  );
 
   public unsubscribe(themeId: number): void {
     this.themeService
       .unsubscribe(themeId)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.fetchUser();
+      .subscribe({
+        next: () => {
+          this.refresh$.next();
+        },
+        error: (err) => {
+          console.error('Erreur lors du désabonnement', err);
+        },
       });
   }
 }

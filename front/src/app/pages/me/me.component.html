@@ -7,16 +7,17 @@
     <h2>Profil utilisateur</h2>
   </div>
 
-  @if (user()) {
+  @if (user$ | async; as user) {
+
   <div class="profile-card">
     <div class="info-group">
       <label>Nom d'utilisateur</label>
-      <p class="info-value">{{ user()?.name }}</p>
+      <p class="info-value">{{ user.name }}</p>
     </div>
 
     <div class="info-group">
       <label>Adresse e-mail</label>
-      <p class="info-value">{{ user()?.email }}</p>
+      <p class="info-value">{{ user.email }}</p>
     </div>
   </div>
 
@@ -24,7 +25,7 @@
     <h3>Abonnements</h3>
 
     <div class="subscriptions-grid">
-      @for (sub of user()?.subscriptions; track sub.id) {
+      @for (sub of user.subscriptions; track sub.id) {
       <div class="subscription-item">
         <div class="sub-info">
           <span class="sub-title">{{ sub.title }}</span>
