@@ -24,12 +24,12 @@ public class Subscription {
     private SubscriptionId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("userId") // Fait référence au champ 'userId' de la classe interne
+    @MapsId("userId")
     @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("themeId") // Fait référence au champ 'themeId' de la classe interne
+    @MapsId("themeId")
     @JoinColumn(name = "theme_id")
     private Theme theme;
 
