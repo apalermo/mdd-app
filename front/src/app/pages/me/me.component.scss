@@ -5,7 +5,7 @@
   padding: 40px 20px;
   position: relative;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: var(--bg-color);
   .back-button {
     position: absolute;
     top: 20px;
@@ -22,7 +22,7 @@
   h2 {
     margin-bottom: 30px;
     font-size: 2rem;
-    color: #333;
+    color: var(--text-dark);
   }
 
   .profile-card {
@@ -48,7 +48,7 @@
       label {
         font-size: 0.85rem;
         font-weight: 600;
-        color: #7963FF; 
+        color: var(--primary-color); 
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
@@ -66,6 +66,73 @@
     color: #666;
     font-style: italic;
   }
+  .subscriptions-section {
+  width: 100%;
+  max-width: 500px;
+  margin-top: 30px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+
+  h3 {
+    font-size: 1.2rem;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .subscriptions-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .subscription-item {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #f0f0f0;
+
+    .sub-info {
+      display: flex;
+      flex-direction: column;
+      
+      .sub-title {
+        font-weight: 600;
+        color: #444;
+      }
+      .sub-desc {
+        font-size: 0.85rem;
+        color: #888;
+      }
+    }
+
+    .unsubscribe-btn {
+      background-color: transparent;
+      border: 1px solid var(--danger-color);
+      color: var(--danger-color);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background-color: var(--danger-color);
+        color: white;
+      }
+    }
+  }
+  
+  .no-subs {
+      text-align: center;
+      color: #777;
+      font-style: italic;
+  }
+}
 }
 
 .header-actions {
@@ -80,8 +147,8 @@
 
   .btn-logout {
     background-color: transparent;
-    border: 1px solid #dc3545;
-    color: #dc3545;
+    border: 1px solid var(--danger-color);
+    color: var(--danger-color);
     padding: 8px 16px;
     border-radius: 4px;
     cursor: pointer;
@@ -89,7 +156,7 @@
     transition: all 0.2s;
 
     &:hover {
-      background-color: #dc3545;
+      background-color: var(--danger-color);
       color: white;
     }
   }

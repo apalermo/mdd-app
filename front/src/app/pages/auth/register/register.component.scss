@@ -3,17 +3,10 @@
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  position: relative;
-
-  .back-button {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    img { width: 24px; }
-  }
+  position: relative;  
 
   .error-message {
-      color: #dc3545;
+      color: var(--danger-color);
       font-size: 0.85rem;
       margin: 0;
       text-align: center;
@@ -36,7 +29,7 @@
     .btn-submit {
       margin-top: 10px;
       padding: 12px;
-      background-color: #7963FF;
+      background-color: var(--primary-color);
       color: white;
       border: none;
       border-radius: 8px;

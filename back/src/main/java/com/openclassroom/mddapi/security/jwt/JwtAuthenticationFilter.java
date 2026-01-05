@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             userEmail = jwtService.extractUsername(jwt);
         } catch (Exception e) {
-            // Si le token est corrompu, on laisse passer (ça échouera plus loin)
+            // En cas d'erreur de token, on laisse la requête continuer. La sécurité Spring bloquera l'accès ultérieurement.
             filterChain.doFilter(request, response);
             return;
         }

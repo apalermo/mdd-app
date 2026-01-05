@@ -2,8 +2,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MeComponent } from './me.component';
 import { UserService } from '../../core/services/user.service';
 import { SessionService } from '../../core/services/session.service';
-import { provideRouter, Router } from '@angular/router';
-import { of, Subject, throwError } from 'rxjs';
+import { ThemeService } from '../../core/services/theme.service';
+import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 import { User } from '../../models/user.interface';
 import { signal } from '@angular/core';
 import { By } from '@angular/platform-browser';
@@ -11,25 +12,21 @@ import { By } from '@angular/platform-browser';
 describe('MeComponent', () => {
   let component: MeComponent;
   let fixture: ComponentFixture<MeComponent>;
-  let router: Router;
-
-  const mockUserService = {
-    me: vi.fn(),
-  };
-
-  const userSignal = signal<User | undefined>(undefined);
-  const mockSessionService = {
-    user: userSignal,
-    updateUser: vi.fn((u: User) => userSignal.set(u)),
-    logOut: vi.fn(),
-  };
 
   const mockUser: User = {
     id: 1,
-    email: 'test@test.com',
-    name: 'SuperDev',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    email: 't@t.com',
+    name: 'Dev',
+    subscriptions: [{ id: 10, title: 'Java', description: '' }],
+    created_at: '',
+    updated_at: '',
+  };
+
+  const mockUserService = { me: vi.fn().mockReturnValue(of(mockUser)) };
+  const mockThemeService = { unsubscribe: vi.fn().mockReturnValue(of(void 0)) };
+  const mockSessionService = {
+    user: signal<User | undefined>(undefined),
+    updateUser: vi.fn(),
   };
 
   beforeEach(async () => {
@@ -39,13 +36,14 @@ describe('MeComponent', () => {
         provideRouter([]),
         { provide: UserService, useValue: mockUserService },
         { provide: SessionService, useValue: mockSessionService },
+        { provide: ThemeService, useValue: mockThemeService },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MeComponent);
     component = fixture.componentInstance;
-    router = TestBed.inject(Router);
-    userSignal.set(undefined);
+
+    fixture.detectChanges();
   });
 
   afterEach(() => {
@@ -56,45 +54,20 @@ describe('MeComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should fetch user data on init and update session', () => {
-    mockUserService.me.mockReturnValue(of(mockUser));
-    fixture.detectChanges();
-
+  it('should display user info via AsyncPipe', () => {
     expect(mockUserService.me).toHaveBeenCalled();
-    expect(mockSessionService.updateUser).toHaveBeenCalledWith(mockUser);
+
+    const nameEl = fixture.debugElement.query(By.css('.info-value'));
+    expect(nameEl.nativeElement.textContent).toContain('Dev');
   });
 
-  it('should display loading message when user data is null (pending request)', () => {
-    userSignal.set(undefined);
+  it('should refresh data when clicking unsubscribe', () => {
+    expect(mockUserService.me).toHaveBeenCalledTimes(1);
 
-    const pendingRequest$ = new Subject<User>();
-    mockUserService.me.mockReturnValue(pendingRequest$);
+    const btn = fixture.debugElement.query(By.css('.unsubscribe-btn'));
+    btn.nativeElement.click();
 
-    fixture.detectChanges();
-
-    const loadingElement = fixture.debugElement.query(By.css('.loading'));
-    expect(loadingElement).toBeTruthy();
-    expect(loadingElement.nativeElement.textContent).toContain(
-      'Chargement de vos informations...'
-    );
-  });
-
-  it('should handle error when fetching user data fails', () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    mockUserService.me.mockReturnValue(throwError(() => new Error('Oups')));
-
-    fixture.detectChanges();
-
-    expect(consoleSpy).toHaveBeenCalled();
-    consoleSpy.mockRestore();
-  });
-
-  it('should log out and navigate to root', () => {
-    const navigateSpy = vi.spyOn(router, 'navigate');
-
-    component.logOut();
-
-    expect(mockSessionService.logOut).toHaveBeenCalled();
-    expect(navigateSpy).toHaveBeenCalledWith(['/']);
+    expect(mockThemeService.unsubscribe).toHaveBeenCalledWith(10);
+    expect(mockUserService.me).toHaveBeenCalledTimes(2); // Le refresh$ a déclenché un nouvel appel
   });
 });

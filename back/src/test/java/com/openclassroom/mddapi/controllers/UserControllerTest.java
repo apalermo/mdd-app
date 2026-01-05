@@ -65,7 +65,9 @@ class UserControllerTest {
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("me-user@test.com"))
-                .andExpect(jsonPath("$.name").value("MeUser"));
+                .andExpect(jsonPath("$.name").value("MeUser"))
+                .andExpect(jsonPath("$.subscriptions").isArray())
+                .andExpect(jsonPath("$.subscriptions").isEmpty());
     }
 
     @Test
@@ -79,8 +81,6 @@ class UserControllerTest {
     @DisplayName("Should return 404 Not Found when token is valid but user deleted")
     void shouldReturnNotFoundWhenUserDeleted() throws Exception {
 
-        // Edge case: Valid JWT token but user entity deleted from database.
-        // Ensure API returns 404 Not Found instead of 500 or 401.
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setEmail("deleted-user@test.com");
         registerRequest.setName("DeletedUser");
@@ -101,7 +101,6 @@ class UserControllerTest {
 
         String token = JsonPath.parse(loginResult.getResponse().getContentAsString()).read("$.token");
 
-        // Setup: Manually delete user to simulate data inconsistency
         var user = userRepository.findByEmail("deleted-user@test.com").orElseThrow();
         userRepository.delete(user);
         userRepository.flush();

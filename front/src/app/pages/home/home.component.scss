@@ -30,15 +30,15 @@
     }
 
     .btn-primary {
-      background-color: #7963FF;
+      background-color: var(--primary-color);
       color: white;
       border: none;
     }
 
     .btn-secondary {
       background-color: white;
-      border: 1px solid #7963FF;
-      color: #7963FF;
+      border: 1px solid var(--primary-color);
+      color: var(--primary-color);
     }
   }
 }
