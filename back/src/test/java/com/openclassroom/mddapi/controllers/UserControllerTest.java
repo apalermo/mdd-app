@@ -143,6 +143,40 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Should update user successfully without changing password")
+    void shouldUpdateUserWithoutPassword() throws Exception {
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setEmail("original@test.com");
+        registerRequest.setName("OriginalName");
+        registerRequest.setPassword("password123");
+
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(registerRequest)));
+
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setIdentifier("original@test.com");
+        loginRequest.setPassword("password123");
+
+        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String token = JsonPath.parse(loginResult.getResponse().getContentAsString()).read("$.token");
+
+        UserUpdateRequest updateRequest = new UserUpdateRequest("UpdatedNameNoPass", "updated@test.com", null);
+
+        mockMvc.perform(put("/api/users/me")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("UpdatedNameNoPass"));
+    }
+
+    @Test
     @DisplayName("Should return 409 Conflict when updating with existing email")
     void shouldReturnConflictWhenEmailExists() throws Exception {
         RegisterRequest userA = new RegisterRequest();
@@ -185,4 +219,5 @@ class UserControllerTest {
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isConflict());
     }
+
 }

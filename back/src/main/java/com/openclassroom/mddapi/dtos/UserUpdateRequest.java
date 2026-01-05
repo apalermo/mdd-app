@@ -21,8 +21,6 @@ public class UserUpdateRequest {
     @Size(max = 255, message = "L'email ne peut pas dépasser 255 caractères")
     private String email;
 
-
-    @NotBlank(message = "Le mot de passe est obligatoire")
     @Size(min = 8, max = 64, message = "Le mot de passe doit contenir entre 8 et 64 caractères")
 
     private String password;

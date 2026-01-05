@@ -6,6 +6,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { User } from '../../models/user.interface';
+import { UserUpdateRequest } from '../../models/user-update-request.interface';
 
 describe('UserService', () => {
   let service: UserService;
@@ -44,5 +45,21 @@ describe('UserService', () => {
     const req = httpMock.expectOne('/api/users/me');
     expect(req.request.method).toBe('GET');
     req.flush(mockUser);
+  });
+
+  it('should update user profile via PUT /api/users/me', () => {
+    const mockUpdateRequest: UserUpdateRequest = {
+      email: 'test@test.com',
+      name: 'SuperDev',
+      password: '',
+    };
+
+    service.me().subscribe((user) => {
+      expect(user).toEqual(mockUpdateRequest);
+    });
+
+    const req = httpMock.expectOne('/api/users/me');
+    expect(req.request.method).toBe('GET');
+    req.flush(mockUpdateRequest);
   });
 });
