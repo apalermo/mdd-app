@@ -1,5 +1,7 @@
 package com.openclassroom.mddapi.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openclassroom.mddapi.dtos.articles.ArticleRequest;
 import com.openclassroom.mddapi.dtos.articles.ArticleResponse;
 import com.openclassroom.mddapi.dtos.articles.CommentRequest;
 import com.openclassroom.mddapi.dtos.articles.CommentResponse;
@@ -14,10 +16,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 import java.security.Principal;
@@ -31,8 +35,15 @@ import static org.mockito.ArgumentMatchers.eq;
 =======
 import static org.mockito.ArgumentMatchers.*;
 >>>>>>> 23de754 (test(articles): complete unhappy path tests for addComment endpoint)
+=======
+import java.security.Principal;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+>>>>>>> 502d948 (feat(articles): implement article creation happy path with unit tests)
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,6 +54,9 @@ class ArticleControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockitoBean
     private ArticleService articleService;
@@ -128,15 +142,24 @@ class ArticleControllerTest {
     }
 
     @Test
+<<<<<<< HEAD
     @DisplayName("POST /api/articles - Failure (Validation Error)")
     void createShouldReturnBadRequestWhenTitleIsEmpty() throws Exception {
         // Arrange
         ArticleRequest invalidRequest = ArticleRequest.builder()
                 .title("")
+=======
+    @DisplayName("POST /api/articles - Success")
+    void createShouldReturnCreatedArticle() throws Exception {
+        // Arrange
+        ArticleRequest request = ArticleRequest.builder()
+                .title("Nouveau")
+>>>>>>> 502d948 (feat(articles): implement article creation happy path with unit tests)
                 .content("Contenu")
                 .themeId(1L)
                 .build();
 
+<<<<<<< HEAD
         // Act & Assert
         mockMvc.perform(post("/api/articles")
                         .principal(() -> "test@example.com")
@@ -215,4 +238,23 @@ class ArticleControllerTest {
     }
 
 >>>>>>> 23de754 (test(articles): complete unhappy path tests for addComment endpoint)
+=======
+        Article mockArticle = Article.builder().id(10L).title("Nouveau").build();
+        ArticleResponse mockResponse = ArticleResponse.builder().id(10L).title("Nouveau").build();
+
+        Principal mockPrincipal = () -> "test@example.com";
+
+        when(articleService.create(any(ArticleRequest.class), eq("test@example.com"))).thenReturn(mockArticle);
+        when(articleMapper.toResponse(mockArticle)).thenReturn(mockResponse);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/articles")
+                        .principal(mockPrincipal)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(10L))
+                .andExpect(jsonPath("$.title").value("Nouveau"));
+    }
+>>>>>>> 502d948 (feat(articles): implement article creation happy path with unit tests)
 }
