@@ -27,11 +27,15 @@ public class ArticleResponse {
     private String content;
     private String authorName;
 <<<<<<< HEAD
+<<<<<<< HEAD
     private ThemeResponse theme;
 =======
     private Long themeId;
     private String themeName;
 >>>>>>> 386d206 (feat(articles): add CommentResponse and ArticleResponse DTOs for API output)
+=======
+    private ThemeResponse theme;
+>>>>>>> 08131d3 (feat(articles): add response DTOs with nested theme structure)
     private List<CommentResponse> comments;
     private LocalDateTime createdAt;
 }
