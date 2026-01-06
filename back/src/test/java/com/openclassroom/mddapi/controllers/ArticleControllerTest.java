@@ -14,6 +14,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+<<<<<<< HEAD
+=======
+import java.security.Principal;
+import java.time.LocalDateTime;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+>>>>>>> 2a6ba0b (test(articles): verify snake_case naming and add validation failure test)
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -21,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ArticleController.class)
 @AutoConfigureMockMvc(addFilters = false)
-@DisplayName("Article Integration Tests")
+@DisplayName("Article Unit Tests")
 class ArticleControllerTest {
 
     @Autowired
@@ -44,16 +52,67 @@ class ArticleControllerTest {
     void getByIdShouldReturnArticle() throws Exception {
         // Arrange
         Long id = 1L;
-        Article mockArticle = Article.builder().id(id).title("Test").build();
-        ArticleResponse mockResponse = ArticleResponse.builder().id(id).title("Test").build();
+        ArticleResponse mockResponse = ArticleResponse.builder()
+                .id(id)
+                .authorName("Auteur")
+                .createdAt(LocalDateTime.now())
+                .build();
 
-        when(articleService.findById(id)).thenReturn(mockArticle);
-        when(articleMapper.toResponse(mockArticle)).thenReturn(mockResponse);
+        when(articleMapper.toResponse(any())).thenReturn(mockResponse);
 
         // Act & Assert
         mockMvc.perform(get("/api/articles/{id}", id))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(id))
-                .andExpect(jsonPath("$.title").value("Test"));
+                .andExpect(jsonPath("$.author_name").value("Auteur"))
+                .andExpect(jsonPath("$.created_at").exists());
     }
+<<<<<<< HEAD
+=======
+
+    @Test
+    @DisplayName("POST /api/articles - Success")
+    void createShouldReturnCreatedArticle() throws Exception {
+        // Arrange
+        ArticleRequest request = ArticleRequest.builder()
+                .title("Nouveau")
+                .content("Contenu")
+                .themeId(1L)
+                .build();
+
+        Article mockArticle = Article.builder().id(10L).title("Nouveau").build();
+        ArticleResponse mockResponse = ArticleResponse.builder().id(10L).title("Nouveau").build();
+
+        Principal mockPrincipal = () -> "test@example.com";
+
+        when(articleService.create(any(ArticleRequest.class), eq("test@example.com"))).thenReturn(mockArticle);
+        when(articleMapper.toResponse(mockArticle)).thenReturn(mockResponse);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/articles")
+                        .principal(mockPrincipal)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(10L))
+                .andExpect(jsonPath("$.title").value("Nouveau"));
+    }
+
+    @Test
+    @DisplayName("POST /api/articles - Failure (Validation Error)")
+    void createShouldReturnBadRequestWhenTitleIsEmpty() throws Exception {
+        // Arrange
+        ArticleRequest invalidRequest = ArticleRequest.builder()
+                .title("")
+                .content("Contenu")
+                .themeId(1L)
+                .build();
+
+        // Act & Assert
+        mockMvc.perform(post("/api/articles")
+                        .principal(() -> "test@example.com")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest());
+    }
+>>>>>>> 2a6ba0b (test(articles): verify snake_case naming and add validation failure test)
 }
