@@ -19,7 +19,7 @@ spring:
       hibernate:
         format_sql: true
   jackson:
-    property-naming-strategy: snake_case
+    property-naming-strategy: SNAKE_CASE
 
 logging:
   level:
