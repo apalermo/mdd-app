@@ -2,6 +2,7 @@ package com.openclassroom.mddapi.dtos;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.openclassroom.mddapi.dtos.themes.ThemeResponse;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -32,7 +33,7 @@ public class UserDto {
     private String name;
 
     @Builder.Default
-    private List<ThemeDto> subscriptions = List.of();
+    private List<ThemeResponse> subscriptions = List.of();
 
     private LocalDateTime createdAt;
 

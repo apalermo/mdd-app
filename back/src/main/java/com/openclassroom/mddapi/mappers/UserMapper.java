@@ -1,7 +1,7 @@
 package com.openclassroom.mddapi.mappers;
 
-import com.openclassroom.mddapi.dtos.ThemeDto;
 import com.openclassroom.mddapi.dtos.UserDto;
+import com.openclassroom.mddapi.dtos.themes.ThemeResponse;
 import com.openclassroom.mddapi.entities.Theme;
 import com.openclassroom.mddapi.entities.User;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ public class UserMapper {
             return null;
         }
 
-        List<ThemeDto> subscribedThemes = user.getSubscriptions().stream()
+        List<ThemeResponse> subscribedThemes = user.getSubscriptions().stream()
                 .map(subscription -> toThemeDto(subscription.getTheme()))
                 .collect(Collectors.toList());
 
@@ -31,9 +31,9 @@ public class UserMapper {
                 .build();
     }
 
-    private ThemeDto toThemeDto(Theme theme) {
+    private ThemeResponse toThemeDto(Theme theme) {
         if (theme == null) return null;
-        ThemeDto dto = new ThemeDto();
+        ThemeResponse dto = new ThemeResponse();
         dto.setId(theme.getId());
         dto.setTitle(theme.getTitle());
         dto.setDescription(theme.getDescription());

@@ -1,27 +1,23 @@
-package com.openclassroom.mddapi.dtos;
+package com.openclassroom.mddapi.dtos.themes;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ThemeDto {
-
+public class ThemeResponse {
     private Long id;
-
-    @NotBlank(message = "Le titre est obligatoire")
-    @Size(max = 50, message = "Le titre ne doit pas dépasser 50 caractères")
     private String title;
-
-    @Size(max = 2000, message = "La description ne doit pas dépasser 2000 caractères")
     private String description;
-
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
 }
