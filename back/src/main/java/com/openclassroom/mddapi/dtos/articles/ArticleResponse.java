@@ -21,6 +21,9 @@ public class ArticleResponse {
     private String content;
     private String authorName;
     private ThemeResponse theme;
-    private List<CommentResponse> comments;
+
+    @Builder.Default
+    private List<CommentResponse> comments = List.of();
+
     private LocalDateTime createdAt;
 }
