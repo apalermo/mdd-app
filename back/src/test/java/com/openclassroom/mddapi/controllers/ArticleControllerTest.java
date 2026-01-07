@@ -5,6 +5,7 @@ import com.openclassroom.mddapi.dtos.articles.CommentRequest;
 import com.openclassroom.mddapi.dtos.articles.CommentResponse;
 import com.openclassroom.mddapi.entities.Article;
 import com.openclassroom.mddapi.entities.Comment;
+import com.openclassroom.mddapi.exceptions.NotFoundException;
 import com.openclassroom.mddapi.mappers.ArticleMapper;
 import com.openclassroom.mddapi.security.jwt.JwtService;
 import com.openclassroom.mddapi.services.ArticleService;
@@ -23,9 +24,13 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+<<<<<<< HEAD
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 >>>>>>> 2a6ba0b (test(articles): verify snake_case naming and add validation failure test)
+=======
+import static org.mockito.ArgumentMatchers.*;
+>>>>>>> 23de754 (test(articles): complete unhappy path tests for addComment endpoint)
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -175,5 +180,39 @@ class ArticleControllerTest {
                 .andExpect(jsonPath("$.author_name").value("Auteur"));
     }
 
+<<<<<<< HEAD
 >>>>>>> 60e89df (feat(articles): implement add comment with unit test (happy path))
+=======
+    @Test
+    @DisplayName("POST /api/articles/{id}/comments - Failure (Empty Content)")
+    void addCommentShouldReturnBadRequestWhenContentIsEmpty() throws Exception {
+        // Arrange
+        CommentRequest invalidRequest = CommentRequest.builder().content("").build();
+
+        // Act & Assert
+        mockMvc.perform(post("/api/articles/{id}/comments", 1L)
+                        .principal(() -> "test@example.com")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("POST /api/articles/{id}/comments - Failure (Article Not Found)")
+    void addCommentShouldReturnNotFoundWhenArticleDoesNotExist() throws Exception {
+        // Arrange
+        CommentRequest request = CommentRequest.builder().content("Contenu").build();
+
+        when(articleService.addComment(eq(99L), any(CommentRequest.class), anyString()))
+                .thenThrow(new NotFoundException("Article not found"));
+
+        // Act & Assert
+        mockMvc.perform(post("/api/articles/{id}/comments", 99L)
+                        .principal(() -> "test@example.com")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound());
+    }
+
+>>>>>>> 23de754 (test(articles): complete unhappy path tests for addComment endpoint)
 }
