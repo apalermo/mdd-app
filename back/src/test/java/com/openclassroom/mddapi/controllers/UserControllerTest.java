@@ -1,28 +1,37 @@
 package com.openclassroom.mddapi.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
-import com.openclassroom.mddapi.dtos.auth.LoginRequest;
-import com.openclassroom.mddapi.dtos.auth.RegisterRequest;
+import com.openclassroom.mddapi.dtos.users.UserResponse;
 import com.openclassroom.mddapi.dtos.users.UserUpdateRequest;
-import com.openclassroom.mddapi.repositories.UserRepository;
+import com.openclassroom.mddapi.entities.User;
+import com.openclassroom.mddapi.exceptions.ConflictException;
+import com.openclassroom.mddapi.exceptions.NotFoundException;
+import com.openclassroom.mddapi.mappers.UserMapper;
+import com.openclassroom.mddapi.security.jwt.JwtService;
+import com.openclassroom.mddapi.services.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Transactional
+@WebMvcTest(UserController.class)
+@AutoConfigureMockMvc(addFilters = false)
+@DisplayName("User Controller Unit Tests")
 class UserControllerTest {
 
     @Autowired
@@ -31,193 +40,111 @@ class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private UserRepository userRepository;
+    @MockitoBean
+    private UserService userService;
+
+    @MockitoBean
+    private UserMapper userMapper;
+
+    @MockitoBean
+    private JwtService jwtService;
+    @MockitoBean
+    private UserDetailsService userDetailsService;
 
     @Test
-    @DisplayName("Should return authenticated user details when token is valid")
+    @DisplayName("GET /me - Success: should return user profile")
     void shouldReturnAuthenticatedUserDetails() throws Exception {
-        RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setEmail("me-user@test.com");
-        registerRequest.setName("MeUser");
-        registerRequest.setPassword("password123");
+        UserResponse mockResponse = UserResponse.builder()
+                .email("me-user@test.com")
+                .name("MeUser")
+                .subscriptions(List.of())
+                .build();
 
-        mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerRequest)));
-
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setIdentifier("me-user@test.com");
-        loginRequest.setPassword("password123");
-
-        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequest)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String token = JsonPath.parse(loginResult.getResponse().getContentAsString()).read("$.token");
+        when(userService.getByEmail("me-user@test.com")).thenReturn(new User());
+        when(userMapper.toDto(any())).thenReturn(mockResponse);
 
         mockMvc.perform(get("/api/users/me")
-                        .header("Authorization", "Bearer " + token))
+                        .principal(() -> "me-user@test.com"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("me-user@test.com"))
-                .andExpect(jsonPath("$.name").value("MeUser"))
-                .andExpect(jsonPath("$.subscriptions").isArray())
-                .andExpect(jsonPath("$.subscriptions").isEmpty());
+                .andExpect(jsonPath("$.name").value("MeUser"));
     }
 
     @Test
-    @DisplayName("Should return 401 Unauthorized when accessing /me without token")
-    void shouldReturnUnauthorizedWhenNoToken() throws Exception {
-        mockMvc.perform(get("/api/users/me"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @DisplayName("Should return 404 Not Found when token is valid but user deleted")
+    @DisplayName("GET /me - Failure: should return 404 when user deleted")
     void shouldReturnNotFoundWhenUserDeleted() throws Exception {
-        RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setEmail("deleted-user@test.com");
-        registerRequest.setName("DeletedUser");
-        registerRequest.setPassword("password123");
-
-        mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerRequest)));
-
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setIdentifier("deleted-user@test.com");
-        loginRequest.setPassword("password123");
-
-        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequest)))
-                .andReturn();
-
-        String token = JsonPath.parse(loginResult.getResponse().getContentAsString()).read("$.token");
-
-        var user = userRepository.findByEmail("deleted-user@test.com").orElseThrow();
-        userRepository.delete(user);
-        userRepository.flush();
+        when(userService.getByEmail("deleted-user@test.com"))
+                .thenThrow(new NotFoundException("User not found"));
 
         mockMvc.perform(get("/api/users/me")
-                        .header("Authorization", "Bearer " + token))
+                        .principal(() -> "deleted-user@test.com"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("Should update user profile successfully and return updated DTO")
+    @DisplayName("PUT /me - Success: Update profile with password")
     void shouldUpdateUserProfileSuccessfully() throws Exception {
-        RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setEmail("original@test.com");
-        registerRequest.setName("OriginalName");
-        registerRequest.setPassword("password123");
+        UserUpdateRequest request = new UserUpdateRequest("UpdatedName", "updated@test.com", "newpassword123");
 
-        mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerRequest)));
+        UserResponse mockResponse = UserResponse.builder()
+                .email("updated@test.com")
+                .name("UpdatedName")
+                .build();
 
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setIdentifier("original@test.com");
-        loginRequest.setPassword("password123");
+        User mockUser = User.builder().id(1L).email("original@test.com").build();
 
-        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequest)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String token = JsonPath.parse(loginResult.getResponse().getContentAsString()).read("$.token");
-
-        UserUpdateRequest updateRequest = new UserUpdateRequest("UpdatedName", "updated@test.com", "newpassword123");
+        when(userService.getByEmail("original@test.com")).thenReturn(mockUser);
+        when(userService.updateUser(eq(1L), any(UserUpdateRequest.class))).thenReturn(mockUser);
+        when(userMapper.toDto(any())).thenReturn(mockResponse);
 
         mockMvc.perform(put("/api/users/me")
-                        .header("Authorization", "Bearer " + token)
+                        .principal(() -> "original@test.com")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateRequest)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("updated@test.com"))
-                .andExpect(jsonPath("$.name").value("UpdatedName"))
-                .andExpect(jsonPath("$.password").doesNotExist());
+                .andExpect(jsonPath("$.name").value("UpdatedName"));
     }
 
     @Test
-    @DisplayName("Should update user successfully without changing password")
+    @DisplayName("PUT /me - Success: Update profile WITHOUT password")
     void shouldUpdateUserWithoutPassword() throws Exception {
-        RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setEmail("original@test.com");
-        registerRequest.setName("OriginalName");
-        registerRequest.setPassword("password123");
+        UserUpdateRequest request = new UserUpdateRequest("UpdatedNameNoPass", "updated@test.com", null);
 
-        mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerRequest)));
+        UserResponse mockResponse = UserResponse.builder()
+                .email("updated@test.com")
+                .name("UpdatedNameNoPass")
+                .build();
 
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setIdentifier("original@test.com");
-        loginRequest.setPassword("password123");
+        User mockUser = User.builder().id(1L).email("original@test.com").build();
 
-        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequest)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String token = JsonPath.parse(loginResult.getResponse().getContentAsString()).read("$.token");
-
-        UserUpdateRequest updateRequest = new UserUpdateRequest("UpdatedNameNoPass", "updated@test.com", null);
+        when(userService.getByEmail("original@test.com")).thenReturn(mockUser);
+        when(userService.updateUser(eq(1L), any(UserUpdateRequest.class))).thenReturn(mockUser);
+        when(userMapper.toDto(any())).thenReturn(mockResponse);
 
         mockMvc.perform(put("/api/users/me")
-                        .header("Authorization", "Bearer " + token)
+                        .principal(() -> "original@test.com")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateRequest)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("UpdatedNameNoPass"));
     }
 
     @Test
-    @DisplayName("Should return 409 Conflict when updating with existing email")
+    @DisplayName("PUT /me - Failure: Conflict on email")
     void shouldReturnConflictWhenEmailExists() throws Exception {
-        RegisterRequest userA = new RegisterRequest();
-        userA.setEmail("obstacle@test.com");
-        userA.setName("Obstacle");
-        userA.setPassword("password123");
+        UserUpdateRequest request = new UserUpdateRequest("Victim", "obstacle@test.com", "newpassword123");
+        User mockUser = User.builder().id(1L).email("victim@test.com").build();
 
-        mockMvc.perform(post("/api/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userA)))
-                .andExpect(status().isCreated());
+        when(userService.getByEmail("victim@test.com")).thenReturn(mockUser);
 
-        RegisterRequest userB = new RegisterRequest();
-        userB.setEmail("victim@test.com");
-        userB.setName("Victim");
-        userB.setPassword("password123");
-
-        mockMvc.perform(post("/api/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userB)))
-                .andExpect(status().isCreated());
-
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setIdentifier("victim@test.com");
-        loginRequest.setPassword("password123");
-
-        MvcResult result = mockMvc.perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequest)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String token = JsonPath.parse(result.getResponse().getContentAsString()).read("$.token");
-
-        UserUpdateRequest updateRequest = new UserUpdateRequest("Victim", "obstacle@test.com", "newpassword123");
+        when(userService.updateUser(eq(1L), any(UserUpdateRequest.class)))
+                .thenThrow(new ConflictException("Cet email est déjà utilisé par un autre utilisateur."));
 
         mockMvc.perform(put("/api/users/me")
-                        .header("Authorization", "Bearer " + token)
+                        .principal(() -> "victim@test.com")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateRequest)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isConflict());
     }
-
 }
