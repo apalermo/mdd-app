@@ -1,7 +1,7 @@
 package com.openclassroom.mddapi.controllers;
 
-import com.openclassroom.mddapi.dtos.UserDto;
-import com.openclassroom.mddapi.dtos.UserUpdateRequest;
+import com.openclassroom.mddapi.dtos.users.UserResponse;
+import com.openclassroom.mddapi.dtos.users.UserUpdateRequest;
 import com.openclassroom.mddapi.entities.User;
 import com.openclassroom.mddapi.mappers.UserMapper;
 import com.openclassroom.mddapi.services.UserService;
@@ -21,14 +21,14 @@ public class UserController {
     private final UserMapper userMapper;
 
     @GetMapping("/me")
-    public ResponseEntity<UserDto> me(Principal principal) {
+    public ResponseEntity<UserResponse> me(Principal principal) {
         User user = userService.getByEmail(principal.getName());
 
         return ResponseEntity.ok(userMapper.toDto(user));
     }
 
     @PutMapping("/me")
-    public ResponseEntity<UserDto> updateMe(@Valid @RequestBody UserUpdateRequest userUpdateRequest, Principal principal) {
+    public ResponseEntity<UserResponse> updateMe(@Valid @RequestBody UserUpdateRequest userUpdateRequest, Principal principal) {
         User currentUser = userService.getByEmail(principal.getName());
         Long userId = currentUser.getId();
 

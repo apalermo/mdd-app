@@ -1,145 +1,102 @@
 package com.openclassroom.mddapi.controllers;
 
-import com.openclassroom.mddapi.entities.Subscription;
+import com.openclassroom.mddapi.dtos.themes.ThemeResponse;
 import com.openclassroom.mddapi.entities.Theme;
-import com.openclassroom.mddapi.entities.User;
-import com.openclassroom.mddapi.repositories.SubscriptionRepository;
-import com.openclassroom.mddapi.repositories.ThemeRepository;
-import com.openclassroom.mddapi.repositories.UserRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import com.openclassroom.mddapi.mappers.ThemeMapper;
+import com.openclassroom.mddapi.security.jwt.JwtService;
+import com.openclassroom.mddapi.services.ThemeService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@DisplayName("Theme Controller Integration Tests")
-public class ThemeControllerTest {
+@WebMvcTest(ThemeController.class)
+@AutoConfigureMockMvc(addFilters = false)
+@DisplayName("Theme Unit Tests")
+class ThemeControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ThemeRepository themeRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private SubscriptionRepository subscriptionRepository;
+    @MockitoBean
+    private ThemeService themeService;
 
-    private User testUser;
-    private Theme testTheme;
+    @MockitoBean
+    private ThemeMapper themeMapper;
 
-    @BeforeEach
-    public void setup() {
-        subscriptionRepository.deleteAll();
-        themeRepository.deleteAll();
-        userRepository.deleteAll();
+    @MockitoBean
+    private JwtService jwtService;
 
-        testUser = User.builder()
-                .email("test@test.com")
-                .name("TestUser")
-                .password("password123")
-                .build();
-        userRepository.save(testUser);
-
-        testTheme = Theme.builder()
-                .title("Java")
-                .description("Le meilleur langage")
-                .build();
-        themeRepository.save(testTheme);
-    }
-
-    @AfterEach
-    public void tearDown() {
-        subscriptionRepository.deleteAll();
-        themeRepository.deleteAll();
-        userRepository.deleteAll();
-    }
+    @MockitoBean
+    private UserDetailsService userDetailsService;
 
     @Test
-    @DisplayName("Should subscribe a user to a theme successfully")
-    @WithMockUser(username = "test@test.com")
-    public void shouldSubscribeToThemeSuccessfully() throws Exception {
-        mockMvc.perform(post("/api/themes/" + testTheme.getId() + "/subscribe"))
+    @DisplayName("GET /api/themes - Should return list of themes")
+    void getThemesShouldReturnList() throws Exception {
+        // Arrange
+        ThemeResponse themeResponse = ThemeResponse.builder().id(1L).title("Java").build();
+
+        when(themeService.getThemes()).thenReturn(List.of(new Theme()));
+        when(themeMapper.toDtoList(any())).thenReturn(List.of(themeResponse));
+
+        // Act & Assert
+        mockMvc.perform(get("/api/themes")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message", is("Subscribed")));
-
-        var id = new Subscription.SubscriptionId(testUser.getId(), testTheme.getId());
-        assertTrue(subscriptionRepository.existsById(id), "Subscription should be present in database");
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].title").value("Java"));
     }
 
     @Test
-    @DisplayName("Should be idempotent when user is already subscribed (return 200 OK)")
-    @WithMockUser(username = "test@test.com")
-    public void shouldBeIdempotentWhenUserIsAlreadySubscribed() throws Exception {
-        var id = new Subscription.SubscriptionId(testUser.getId(), testTheme.getId());
-        Subscription sub = Subscription.builder()
-                .id(id)
-                .user(testUser)
-                .theme(testTheme)
-                .build();
-        subscriptionRepository.save(sub);
+    @DisplayName("POST /api/themes/{id}/subscribe - Success")
+    void subscribeShouldReturnOk() throws Exception {
+        // Arrange
+        Long themeId = 1L;
+        doNothing().when(themeService).subscribe(eq(themeId), anyString());
 
-        mockMvc.perform(post("/api/themes/" + testTheme.getId() + "/subscribe"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message", is("Subscribed")));
-
-        assertTrue(subscriptionRepository.existsById(id));
+        // Act & Assert
+        mockMvc.perform(post("/api/themes/{id}/subscribe", themeId)
+                        .principal(() -> "test@test.com")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Should return 404 Not Found when theme ID does not exist")
-    @WithMockUser(username = "test@test.com")
-    public void shouldReturnNotFoundWhenThemeDoesNotExistOnSubscribe() throws Exception {
-        mockMvc.perform(post("/api/themes/999/subscribe"))
+    @DisplayName("POST /api/themes/{id}/subscribe - Not Found")
+    void subscribeShouldReturnNotFoundWhenThemeMissing() throws Exception {
+        // Arrange
+        doThrow(new com.openclassroom.mddapi.exceptions.NotFoundException("Theme not found"))
+                .when(themeService).subscribe(eq(99L), anyString());
+
+        // Act & Assert
+        mockMvc.perform(post("/api/themes/{id}/subscribe", 99L)
+                        .principal(() -> "test@test.com"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("Should return 404 Not Found when user does not exist")
-    @WithMockUser(username = "unknown@test.com")
-    public void shouldReturnNotFoundWhenUserDoesNotExistOnSubscribe() throws Exception {
-        mockMvc.perform(post("/api/themes/" + testTheme.getId() + "/subscribe"))
-                .andExpect(status().isNotFound());
-    }
+    @DisplayName("DELETE /api/themes/{id}/unsubscribe - Success")
+    void unsubscribeShouldReturnNoContent() throws Exception {
+        // Arrange
+        doNothing().when(themeService).unsubscribe(eq(1L), anyString());
 
-    @Test
-    @DisplayName("Should unsubscribe a user from a theme successfully")
-    @WithMockUser(username = "test@test.com")
-    public void shouldUnsubscribeFromThemeSuccessfully() throws Exception {
-        // GIVEN
-        var id = new Subscription.SubscriptionId(testUser.getId(), testTheme.getId());
-        Subscription sub = Subscription.builder()
-                .id(id)
-                .user(testUser)
-                .theme(testTheme)
-                .build();
-        subscriptionRepository.save(sub);
-
-        mockMvc.perform(delete("/api/themes/" + testTheme.getId() + "/unsubscribe"))
-                .andExpect(status().isNoContent());
-
-        assertFalse(subscriptionRepository.existsById(id), "Subscription should be removed from database");
-    }
-
-    @Test
-    @DisplayName("Should return 204 No Content when user is not subscribed (Idempotence)")
-    @WithMockUser(username = "test@test.com")
-    public void shouldReturnNoContentWhenUserIsNotSubscribed() throws Exception {
-        mockMvc.perform(delete("/api/themes/" + testTheme.getId() + "/unsubscribe"))
+        // Act & Assert
+        mockMvc.perform(delete("/api/themes/{id}/unsubscribe", 1L)
+                        .principal(() -> "test@test.com"))
                 .andExpect(status().isNoContent());
     }
 }

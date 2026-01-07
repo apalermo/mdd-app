@@ -1,6 +1,6 @@
 package com.openclassroom.mddapi.services;
 
-import com.openclassroom.mddapi.dtos.UserUpdateRequest;
+import com.openclassroom.mddapi.dtos.users.UserUpdateRequest;
 import com.openclassroom.mddapi.entities.Subscription;
 import com.openclassroom.mddapi.entities.Theme;
 import com.openclassroom.mddapi.entities.User;
