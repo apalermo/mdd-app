@@ -1,7 +1,10 @@
 package com.openclassroom.mddapi.controllers;
 
 import com.openclassroom.mddapi.dtos.articles.ArticleResponse;
+import com.openclassroom.mddapi.dtos.articles.CommentRequest;
+import com.openclassroom.mddapi.dtos.articles.CommentResponse;
 import com.openclassroom.mddapi.entities.Article;
+import com.openclassroom.mddapi.entities.Comment;
 import com.openclassroom.mddapi.mappers.ArticleMapper;
 import com.openclassroom.mddapi.security.jwt.JwtService;
 import com.openclassroom.mddapi.services.ArticleService;
@@ -140,5 +143,37 @@ class ArticleControllerTest {
 >>>>>>> 2a6ba0b (test(articles): verify snake_case naming and add validation failure test)
 =======
 
+<<<<<<< HEAD
 >>>>>>> 0f5e52a (feat(articles): implement find all articles endpoint with unit test ( happy path ))
+=======
+    @Test
+    @DisplayName("POST /api/articles/{id}/comments - Success")
+    void addCommentShouldReturnComment() throws Exception {
+        // Arrange
+        Long articleId = 1L;
+        String content = "Super article !";
+        CommentRequest request = CommentRequest.builder().content(content).build();
+
+        CommentResponse mockResponse = CommentResponse.builder()
+                .id(1L)
+                .content(content)
+                .authorName("Auteur")
+                .build();
+
+        when(articleService.addComment(eq(articleId), any(CommentRequest.class), eq("test@example.com")))
+                .thenReturn(new Comment());
+
+        when(articleMapper.toCommentResponse(any())).thenReturn(mockResponse);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/articles/{id}/comments", articleId)
+                        .principal(() -> "test@example.com")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.content").value(content))
+                .andExpect(jsonPath("$.author_name").value("Auteur"));
+    }
+
+>>>>>>> 60e89df (feat(articles): implement add comment with unit test (happy path))
 }

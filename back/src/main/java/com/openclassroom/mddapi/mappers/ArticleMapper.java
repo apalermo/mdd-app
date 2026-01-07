@@ -41,7 +41,7 @@ public class ArticleMapper {
                 .collect(Collectors.toList());
     }
 
-    private CommentResponse toCommentResponse(Comment comment) {
+    public CommentResponse toCommentResponse(Comment comment) {
         return CommentResponse.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
