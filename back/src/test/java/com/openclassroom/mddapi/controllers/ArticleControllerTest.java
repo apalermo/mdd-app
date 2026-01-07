@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 =======
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -48,6 +49,26 @@ class ArticleControllerTest {
     private UserDetailsService userDetailsService;
 
     @Test
+    @DisplayName("GET /api/articles - Success")
+    void findAllShouldReturnListOfArticles() throws Exception {
+        // Arrange
+        ArticleResponse article1 = ArticleResponse.builder().id(1L).title("Art 1").authorName("Auteur").build();
+        ArticleResponse article2 = ArticleResponse.builder().id(2L).title("Art 2").authorName("Auteur").build();
+
+        // Mocking
+        when(articleService.findAll()).thenReturn(List.of(new Article(), new Article()));
+
+        when(articleMapper.toDtoList(any())).thenReturn(List.of(article1, article2));
+
+        // Act & Assert
+        mockMvc.perform(get("/api/articles")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].author_name").value("Auteur"));
+    }
+
+    @Test
     @DisplayName("GET /api/articles/{id} - Success")
     void getByIdShouldReturnArticle() throws Exception {
         // Arrange
@@ -61,7 +82,8 @@ class ArticleControllerTest {
         when(articleMapper.toResponse(any())).thenReturn(mockResponse);
 
         // Act & Assert
-        mockMvc.perform(get("/api/articles/{id}", id))
+        mockMvc.perform(get("/api/articles/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.author_name").value("Auteur"))
                 .andExpect(jsonPath("$.created_at").exists());
@@ -114,5 +136,9 @@ class ArticleControllerTest {
                         .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest());
     }
+<<<<<<< HEAD
 >>>>>>> 2a6ba0b (test(articles): verify snake_case naming and add validation failure test)
+=======
+
+>>>>>>> 0f5e52a (feat(articles): implement find all articles endpoint with unit test ( happy path ))
 }

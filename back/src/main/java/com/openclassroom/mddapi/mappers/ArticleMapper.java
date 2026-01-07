@@ -7,6 +7,7 @@ import com.openclassroom.mddapi.entities.Article;
 import com.openclassroom.mddapi.entities.Comment;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -19,16 +20,25 @@ public class ArticleMapper {
                 .id(article.getId())
                 .title(article.getTitle())
                 .content(article.getContent())
-                .authorName(article.getAuthor().getUsername())
+                .authorName(article.getAuthor() != null ? article.getAuthor().getUsername() : null)
                 .theme(ThemeResponse.builder()
                         .id(article.getTheme().getId())
                         .title(article.getTheme().getTitle())
                         .build())
                 .createdAt(article.getCreatedAt())
-                .comments(article.getComments().stream()
+                .comments(article.getComments() != null ? article.getComments().stream()
                         .map(this::toCommentResponse)
-                        .collect(Collectors.toList()))
+                        .collect(Collectors.toList()) : List.of())
                 .build();
+    }
+
+    public List<ArticleResponse> toDtoList(List<Article> articles) {
+        if (articles == null) {
+            return List.of();
+        }
+        return articles.stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     private CommentResponse toCommentResponse(Comment comment) {
