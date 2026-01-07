@@ -29,6 +29,7 @@ public class ArticleResponse {
 <<<<<<< HEAD
 <<<<<<< HEAD
     private ThemeResponse theme;
+<<<<<<< HEAD
 =======
     private Long themeId;
     private String themeName;
@@ -37,5 +38,9 @@ public class ArticleResponse {
     private ThemeResponse theme;
 >>>>>>> 08131d3 (feat(articles): add response DTOs with nested theme structure)
     private List<CommentResponse> comments;
+=======
+    @Builder.Default
+    private List<CommentResponse> comments = List.of();
+>>>>>>> 034081d (refactor(articles): secure comments list in ArticleResponse with Builder defaults)
     private LocalDateTime createdAt;
 }
