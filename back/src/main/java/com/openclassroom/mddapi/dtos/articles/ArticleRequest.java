@@ -1,10 +1,7 @@
 package com.openclassroom.mddapi.dtos.articles;
 
-<<<<<<< HEAD
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-=======
->>>>>>> c93089e (feat(articles): implement core service logic for retrieval and creation with TDD)
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -17,10 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-<<<<<<< HEAD
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-=======
->>>>>>> c93089e (feat(articles): implement core service logic for retrieval and creation with TDD)
 public class ArticleRequest {
 
     @NotBlank(message = "Le titre est obligatoire")
