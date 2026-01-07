@@ -51,7 +51,7 @@ class ThemeControllerTest {
         ThemeResponse themeResponse = ThemeResponse.builder().id(1L).title("Java").build();
 
         when(themeService.getThemes()).thenReturn(List.of(new Theme()));
-        when(themeMapper.toDtoList(any())).thenReturn(List.of(themeResponse)); // Utilise themeResponse
+        when(themeMapper.toDtoList(any())).thenReturn(List.of(themeResponse));
 
         // Act & Assert
         mockMvc.perform(get("/api/themes")

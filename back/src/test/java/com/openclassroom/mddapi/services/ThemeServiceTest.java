@@ -62,7 +62,7 @@ class ThemeServiceTest {
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
         when(themeRepository.findById(themeId)).thenReturn(Optional.of(theme));
-        when(subscriptionRepository.existsById(any())).thenReturn(false); // Pas encore abonné
+        when(subscriptionRepository.existsById(any())).thenReturn(false);
 
         // Act
         themeService.subscribe(themeId, email);
@@ -82,7 +82,7 @@ class ThemeServiceTest {
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
         when(themeRepository.findById(themeId)).thenReturn(Optional.of(theme));
-        when(subscriptionRepository.existsById(any())).thenReturn(true); // Déjà abonné
+        when(subscriptionRepository.existsById(any())).thenReturn(true);
 
         // Act
         themeService.subscribe(themeId, email);
