@@ -1,4 +1,4 @@
-package com.openclassroom.mddapi.dtos;
+package com.openclassroom.mddapi.dtos.users;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

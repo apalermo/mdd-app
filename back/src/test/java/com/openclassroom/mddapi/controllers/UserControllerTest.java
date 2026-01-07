@@ -2,9 +2,9 @@ package com.openclassroom.mddapi.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import com.openclassroom.mddapi.dtos.UserUpdateRequest;
 import com.openclassroom.mddapi.dtos.auth.LoginRequest;
 import com.openclassroom.mddapi.dtos.auth.RegisterRequest;
+import com.openclassroom.mddapi.dtos.users.UserUpdateRequest;
 import com.openclassroom.mddapi.repositories.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
