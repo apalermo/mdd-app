@@ -19,7 +19,7 @@ export class HeaderComponent {
   public readonly showNavigation = input<boolean>(true);
 
   public readonly navLinks: NavigationLink[] = [
-    // { label: 'Articles', url: '/articles' }, // TODO: Décommenter quand la feature Articles sera prête
+    { label: 'Articles', url: '/articles' },
     { label: 'Thèmes', url: '/themes' },
   ];
 

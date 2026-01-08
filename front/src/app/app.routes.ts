@@ -40,6 +40,13 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       {
+        path: 'articles',
+        loadComponent: () =>
+          import('./pages/articles/articles.component').then(
+            (m) => m.ArticlesComponent
+          ),
+      },
+      {
         path: 'me',
         loadComponent: () =>
           import('./pages/me/me.component').then((m) => m.MeComponent),
