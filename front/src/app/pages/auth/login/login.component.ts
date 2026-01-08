@@ -40,7 +40,7 @@ export class LoginComponent {
 
             this.errorMessage.set(undefined);
 
-            this.router.navigate(['/me']); // TODO: Redirect to /articles once the feature is implemented
+            this.router.navigate(['/articles']);
           },
           error: (err) => {
             if (err.status === 401) {

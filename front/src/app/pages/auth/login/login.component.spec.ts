@@ -55,8 +55,7 @@ describe('LoginComponent', () => {
     expect(mockAuthService.login).toHaveBeenCalledWith(validRequest);
     expect(mockSessionService.logIn).toHaveBeenCalledWith(mockToken);
     expect(component.errorMessage()).toBeUndefined();
-    expect(navigateSpy).toHaveBeenCalledWith(['/me']); // TODO: Redirect to /articles once the feature is implemented
-  });
+    expect(navigateSpy).toHaveBeenCalledWith(['/articles']);
 
   it('should set error message on 401 Unauthorized', () => {
     const navigateSpy = vi.spyOn(router, 'navigate');
