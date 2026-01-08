@@ -1,9 +1,44 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { ArticleService } from '../../../core/services/article.service';
+import { ThemeService } from '../../../core/services/theme.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ArticleRequest } from '../../../models/article.interface';
 
 @Component({
   selector: 'app-article-create',
-  imports: [],
+  standalone: true,
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './article-create.component.html',
-  styleUrl: './article-create.component.scss',
+  styleUrls: ['./article-create.component.scss'],
 })
-export class ArticleCreateComponent {}
+export class ArticleCreateComponent {
+  private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly articleService = inject(ArticleService);
+  private readonly themeService = inject(ThemeService);
+
+  public readonly themes = toSignal(this.themeService.getThemes(), {
+    initialValue: [],
+  });
+
+  public readonly articleForm = this.fb.group({
+    title: ['', [Validators.required, Validators.minLength(5)]],
+    theme_id: [null as number | null, Validators.required],
+    content: ['', [Validators.required, Validators.minLength(10)]],
+  });
+
+  public onSubmit(): void {
+    if (this.articleForm.valid) {
+      const request = this.articleForm.value as ArticleRequest;
+
+      this.articleService.create(request).subscribe({
+        next: () => {
+          this.router.navigate(['/articles']);
+        },
+        error: (err) => console.error('Erreur lors de la création', err),
+      });
+    }
+  }
+}
