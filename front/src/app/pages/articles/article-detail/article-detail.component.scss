@@ -66,5 +66,38 @@
         max-width: 100%;
       }
     }
+    .comment-form {
+  margin-top: 30px;
+  
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    textarea {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 15px 50px 15px 15px;
+      resize: none;
+      font-family: inherit;
+      &:focus { outline-color: var(--primary-color); }
+    }
+
+    .send-btn {
+      position: absolute;
+      right: 15px;
+      background: none;
+      border: none;
+      color: var(--primary-color);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+
+      &:disabled { color: #ccc; cursor: not-allowed; }
+      &:hover:not(:disabled) { transform: scale(1.1); }
+    }
+  }}
   }
 }

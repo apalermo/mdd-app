@@ -34,6 +34,23 @@
       <p class="no-comments">Aucun commentaire pour le moment.</p>
       }
     </div>
+    <form
+      [formGroup]="commentForm"
+      (ngSubmit)="onSubmitComment()"
+      class="comment-form"
+    >
+      <div class="input-wrapper">
+        <textarea
+          formControlName="content"
+          placeholder="Écrivez ici votre commentaire"
+          rows="3"
+        >
+        </textarea>
+        <button type="submit" [disabled]="commentForm.invalid" class="send-btn">
+          <span class="icon-send">➤</span>
+        </button>
+      </div>
+    </form>
   </section>
 </div>
 }

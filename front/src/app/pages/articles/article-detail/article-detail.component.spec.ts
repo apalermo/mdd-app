@@ -2,7 +2,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ArticleDetailComponent } from './article-detail.component';
 import { ArticleService } from '../../../core/services/article.service';
 import { of } from 'rxjs';
-import { ActivatedRoute, provideRouter } from '@angular/router';
+import {
+  ActivatedRoute,
+  convertToParamMap,
+  provideRouter,
+} from '@angular/router';
 import { By } from '@angular/platform-browser';
 
 describe('ArticleDetailComponent', () => {
@@ -14,7 +18,7 @@ describe('ArticleDetailComponent', () => {
     title: 'Les Design Patterns en Java',
     content: 'Une analyse profonde des patterns Singleton et Factory.',
     author_name: 'Jean Dev',
-    theme: { title: 'Java' },
+    theme: { id: 1, title: 'Java' },
     created_at: '2026-01-08',
     comments: [
       {
@@ -38,7 +42,12 @@ describe('ArticleDetailComponent', () => {
         { provide: ArticleService, useValue: mockArticleService },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: () => '1' } } },
+          useValue: {
+            snapshot: {
+              paramMap: convertToParamMap({ id: '1' }),
+            },
+            paramMap: of(convertToParamMap({ id: '1' })),
+          },
         },
       ],
     }).compileComponents();
@@ -62,5 +71,27 @@ describe('ArticleDetailComponent', () => {
     const comments = fixture.debugElement.queryAll(By.css('.comment-item'));
     expect(comments.length).toBe(1);
     expect(comments[0].nativeElement.textContent).toContain('Très instructif');
+  });
+
+  it('should call addComment, update local state and reset form on success ', () => {
+    const newComment = {
+      author_name: 'Moi',
+      content: 'Super !',
+      created_at: '2026-01-08',
+    };
+    component.article.set(mockArticle);
+
+    component.commentForm.controls.content.setValue('Super !');
+
+    mockArticleService.addComment.mockReturnValue(of(newComment));
+
+    component.onSubmitComment();
+
+    fixture.detectChanges();
+
+    expect(component.article()?.comments).toContain(newComment);
+    expect(component.article()?.comments.length).toBe(2);
+
+    expect(component.commentForm.get('content')?.value).toBeNull();
   });
 });
