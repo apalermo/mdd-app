@@ -5,6 +5,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { SessionService } from '../../../core/services/session.service';
 import { LoginRequest } from '../../../models/auth.interface';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -33,11 +34,12 @@ export class LoginComponent {
 
       this.authService
         .login(loginRequest)
-        .pipe(takeUntilDestroyed(this.destroyRef))
+        .pipe(
+          switchMap((response) => this.sessionService.logIn(response.token)),
+          takeUntilDestroyed(this.destroyRef)
+        )
         .subscribe({
-          next: (response) => {
-            this.sessionService.logIn(response.token);
-
+          next: () => {
             this.errorMessage.set(undefined);
 
             this.router.navigate(['/articles']);
