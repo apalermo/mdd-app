@@ -16,8 +16,12 @@ describe('ArticleService', () => {
     title: 'Test',
     content: 'Content',
     author_name: 'Dev',
-    theme_title: 'Java',
+    theme: {
+      id: 1,
+      title: 'Java',
+    },
     created_at: '',
+    comments: [],
   };
 
   beforeEach(() => {
