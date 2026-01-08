@@ -15,7 +15,7 @@
 
   <div class="articles-grid">
     @for (article of articles(); track article.id) {
-    <div class="article-card" [routerLink]="['/articles/detail', article.id]">
+    <div class="article-card" [routerLink]="['/articles/', article.id]">
       <div class="card-content">
         <h3>{{ article.title }}</h3>
         <div class="meta-row">

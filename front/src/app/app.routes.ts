@@ -41,10 +41,22 @@ export const routes: Routes = [
     children: [
       {
         path: 'articles',
-        loadComponent: () =>
-          import('./pages/articles/articles.component').then(
-            (m) => m.ArticlesComponent
-          ),
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/articles/articles.component').then(
+                (m) => m.ArticlesComponent
+              ),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import(
+                './pages/articles/article-detail/article-detail.component'
+              ).then((m) => m.ArticleDetailComponent),
+          },
+        ],
       },
       {
         path: 'me',
