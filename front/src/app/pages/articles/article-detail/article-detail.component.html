@@ -1,1 +1,39 @@
-<p>article-detail works!</p>
+@if (article(); as item) {
+<div class="article-detail-container">
+  <div class="back-nav">
+    <a routerLink="/articles" class="back-link">←</a>
+  </div>
+
+  <header class="article-header">
+    <h2>{{ item.title }}</h2>
+    <div class="meta-row">
+      <span class="date">{{ item.created_at | date : "dd/MM/yyyy" }}</span>
+      <span class="author">Auteur : {{ item.author_name }}</span>
+      <span class="theme-tag">{{ item.theme.title }}</span>
+    </div>
+  </header>
+
+  <article class="content">
+    {{ item.content }}
+  </article>
+
+  <hr class="separator" />
+
+  <section class="comments-section">
+    <h3>Commentaires</h3>
+
+    <div class="comments-list">
+      @for (comment of item.comments; track $index) {
+      <div class="comment-item">
+        <p class="comment-author">{{ comment.author_name }}</p>
+        <div class="comment-bubble">
+          {{ comment.content }}
+        </div>
+      </div>
+      } @empty {
+      <p class="no-comments">Aucun commentaire pour le moment.</p>
+      }
+    </div>
+  </section>
+</div>
+}
