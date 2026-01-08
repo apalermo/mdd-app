@@ -1,9 +1,11 @@
+import { Theme } from './theme.interface';
+
 export interface Article {
   id: number;
   title: string;
   content: string;
   author_name: string;
-  theme_title: string;
+  theme: Theme;
   created_at: string;
   comments?: Comment[];
 }
