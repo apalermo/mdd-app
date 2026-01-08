@@ -5,12 +5,12 @@ export interface Article {
   title: string;
   content: string;
   author_name: string;
-  theme: Theme;
+  theme: Pick<Theme, 'id' | 'title'>;
   created_at: string;
-  comments?: Comment[];
+  comments: ArticleComment[];
 }
 
-export interface Comment {
+export interface ArticleComment {
   author_name: string;
   content: string;
   created_at: string;
