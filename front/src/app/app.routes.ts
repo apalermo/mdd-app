@@ -50,6 +50,13 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'create',
+            loadComponent: () =>
+              import(
+                './pages/articles/article-create/article-create.component'
+              ).then((m) => m.ArticleCreateComponent),
+          },
+          {
             path: ':id',
             loadComponent: () =>
               import(
