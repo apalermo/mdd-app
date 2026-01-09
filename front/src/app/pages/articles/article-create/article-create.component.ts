@@ -23,7 +23,7 @@ export class ArticleCreateComponent {
     initialValue: [],
   });
 
-  public readonly articleForm = this.fb.group({
+  public readonly articleForm = this.fb.nonNullable.group({
     title: ['', [Validators.required, Validators.minLength(5)]],
     theme_id: [null as number | null, Validators.required],
     content: ['', [Validators.required, Validators.minLength(10)]],
@@ -31,13 +31,10 @@ export class ArticleCreateComponent {
 
   public onSubmit(): void {
     if (this.articleForm.valid) {
-      const request = this.articleForm.value as ArticleRequest;
+      const request = this.articleForm.getRawValue() as ArticleRequest;
 
-      this.articleService.create(request).subscribe({
-        next: () => {
-          this.router.navigate(['/articles']);
-        },
-        error: (err) => console.error('Erreur lors de la création', err),
+      this.articleService.create(request).subscribe(() => {
+        this.router.navigate(['/articles']);
       });
     }
   }

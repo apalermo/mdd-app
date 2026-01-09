@@ -92,6 +92,6 @@ describe('ArticleDetailComponent', () => {
     expect(component.article()?.comments).toContain(newComment);
     expect(component.article()?.comments.length).toBe(2);
 
-    expect(component.commentForm.get('content')?.value).toBeNull();
+    expect(component.commentForm.get('content')?.value).toBe('');
   });
 });
