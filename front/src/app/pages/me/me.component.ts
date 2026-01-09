@@ -1,4 +1,4 @@
-import { Component, inject, DestroyRef, signal } from '@angular/core';
+import { Component, inject, DestroyRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -7,6 +7,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../core/services/user.service';
 import { SessionService } from '../../core/services/session.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { UserUpdateRequest } from '../../models/user-update-request.interface';
 
 @Component({
@@ -20,11 +21,9 @@ export class MeComponent {
   private readonly userService = inject(UserService);
   private readonly sessionService = inject(SessionService);
   private readonly themeService = inject(ThemeService);
+  private readonly notificationService = inject(NotificationService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
-
-  public successMsg = signal<string | null>(null);
-  public errorMsg = signal<string | null>(null);
 
   public form = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
@@ -47,42 +46,30 @@ export class MeComponent {
   );
 
   public submit(): void {
-    this.successMsg.set(null);
-    this.errorMsg.set(null);
+    if (this.form.valid) {
+      const val = this.form.getRawValue();
+      const request: UserUpdateRequest = {
+        name: val.name,
+        email: val.email,
+        password: val.password || undefined,
+      };
 
-    if (this.form.invalid) {
-      this.errorMsg.set('Veuillez vérifier les champs du formulaire.');
-      return;
-    }
-
-    const val = this.form.getRawValue();
-    const request: UserUpdateRequest = {
-      name: val.name,
-      email: val.email,
-      password: val.password || undefined,
-    };
-
-    this.userService.update(request).subscribe({
-      next: (updatedUser) => {
-        this.successMsg.set('Vos modifications ont été enregistrées !');
+      this.userService.update(request).subscribe((updatedUser) => {
+        this.notificationService.show(
+          'Vos modifications ont été enregistrées !'
+        );
         this.sessionService.updateUser(updatedUser);
-      },
-      error: () => {
-        this.errorMsg.set('Une erreur est survenue lors de la sauvegarde.');
-      },
-    });
+      });
+    }
   }
 
   public unsubscribe(themeId: number): void {
     this.themeService
       .unsubscribe(themeId)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.refresh$.next();
-          this.successMsg.set('Désabonnement pris en compte.');
-        },
-        error: (err) => console.error('Erreur', err),
+      .subscribe(() => {
+        this.refresh$.next();
+        this.notificationService.show('Désabonnement pris en compte.');
       });
   }
 }
