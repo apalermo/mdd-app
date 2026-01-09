@@ -40,6 +40,32 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       {
+        path: 'articles',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/articles/articles.component').then(
+                (m) => m.ArticlesComponent
+              ),
+          },
+          {
+            path: 'create',
+            loadComponent: () =>
+              import(
+                './pages/articles/article-create/article-create.component'
+              ).then((m) => m.ArticleCreateComponent),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import(
+                './pages/articles/article-detail/article-detail.component'
+              ).then((m) => m.ArticleDetailComponent),
+          },
+        ],
+      },
+      {
         path: 'me',
         loadComponent: () =>
           import('./pages/me/me.component').then((m) => m.MeComponent),

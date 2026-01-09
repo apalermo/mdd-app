@@ -12,8 +12,13 @@ describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
   let router: Router;
 
-  const mockAuthService = { login: vi.fn() };
-  const mockSessionService = { logIn: vi.fn() };
+  const mockAuthService = {
+    login: vi.fn(),
+  };
+
+  const mockSessionService = {
+    logIn: vi.fn(),
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -49,13 +54,16 @@ describe('LoginComponent', () => {
 
     component.loginForm.setValue(validRequest);
     mockAuthService.login.mockReturnValue(of({ token: mockToken }));
+    mockSessionService.logIn.mockReturnValue(
+      of({ id: 1, email: 'admin@test.com' })
+    );
 
     component.onSubmit();
 
     expect(mockAuthService.login).toHaveBeenCalledWith(validRequest);
     expect(mockSessionService.logIn).toHaveBeenCalledWith(mockToken);
     expect(component.errorMessage()).toBeUndefined();
-    expect(navigateSpy).toHaveBeenCalledWith(['/me']); // TODO: Redirect to /articles once the feature is implemented
+    expect(navigateSpy).toHaveBeenCalledWith(['/articles']);
   });
 
   it('should set error message on 401 Unauthorized', () => {

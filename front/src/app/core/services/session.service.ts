@@ -1,11 +1,14 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { User } from '../../models/user.interface';
+import { Observable, tap } from 'rxjs';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SessionService {
   private readonly TOKEN_KEY = 'token';
+  private readonly userService = inject(UserService);
 
   private $token = signal<string | null>(localStorage.getItem(this.TOKEN_KEY));
 
@@ -13,9 +16,10 @@ export class SessionService {
 
   public isLogged = computed(() => !!this.$token());
 
-  public logIn(token: string): void {
+  public logIn(token: string): Observable<User> {
     localStorage.setItem(this.TOKEN_KEY, token);
     this.$token.set(token);
+    return this.userService.me().pipe(tap((user) => this.user.set(user)));
   }
 
   public updateUser(user: User): void {

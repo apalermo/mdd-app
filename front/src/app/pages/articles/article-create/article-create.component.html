@@ -1,0 +1,41 @@
+<div class="create-container">
+  <header class="header">
+    <a routerLink="/articles" class="back-link">←</a>
+    <h2>Créer un nouvel article</h2>
+  </header>
+
+  <form [formGroup]="articleForm" (ngSubmit)="onSubmit()" class="article-form">
+    <div class="form-group">
+      <select formControlName="theme_id" class="custom-select">
+        <option [ngValue]="null" disabled selected>Choisir un thème</option>
+        @for (theme of themes(); track theme.id) {
+        <option [value]="theme.id">{{ theme.title }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-group">
+      <input
+        type="text"
+        formControlName="title"
+        placeholder="Titre de l'article"
+        class="custom-input"
+      />
+    </div>
+
+    <div class="form-group">
+      <textarea
+        formControlName="content"
+        placeholder="Contenu de l'article"
+        rows="10"
+        class="custom-textarea"
+      ></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="articleForm.invalid" class="submit-btn">
+        Envoyer <span class="icon-send">➤</span>
+      </button>
+    </div>
+  </form>
+</div>

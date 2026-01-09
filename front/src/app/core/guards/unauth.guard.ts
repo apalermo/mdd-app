@@ -7,7 +7,7 @@ export const unauthGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
 
   if (sessionService.isLogged()) {
-    router.navigate(['/me']); // TODO: Redirect to /articles once the feature is implemented
+    router.navigate(['/articles']);
     return false;
   }
 

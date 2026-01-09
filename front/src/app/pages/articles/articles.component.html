@@ -1,0 +1,34 @@
+<div class="articles-container">
+  <div class="top-bar">
+    <button class="btn-create" routerLink="/articles/create">
+      Créer un article
+    </button>
+
+    <div class="sort-wrapper">
+      <label for="sort">Trier par</label>
+      <select id="sort" (change)="updateSort($event)">
+        <option value="date">Date</option>
+        <option value="title">Titre</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="articles-grid">
+    @for (article of articles(); track article.id) {
+    <div class="article-card" [routerLink]="['/articles/', article.id]">
+      <div class="card-content">
+        <h3>{{ article.title }}</h3>
+        <div class="meta-row">
+          <span class="date">{{
+            article.created_at | date : "dd/MM/yyyy"
+          }}</span>
+          <span class="author">{{ article.author_name }}</span>
+        </div>
+        <p class="description">{{ article.content }}</p>
+      </div>
+    </div>
+    } @empty {
+    <p class="no-data">Aucun article n'a encore été publié.</p>
+    }
+  </div>
+</div>
