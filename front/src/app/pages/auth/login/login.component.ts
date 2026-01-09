@@ -1,9 +1,8 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { SessionService } from '../../../core/services/session.service';
-import { LoginRequest } from '../../../models/auth.interface';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs';
 
@@ -21,16 +20,14 @@ export class LoginComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  public errorMessage = signal<string | undefined>(undefined);
-
-  public loginForm = this.fb.group({
+  public readonly loginForm = this.fb.nonNullable.group({
     identifier: ['', [Validators.required]],
     password: ['', [Validators.required, Validators.minLength(3)]],
   });
 
   public onSubmit(): void {
     if (this.loginForm.valid) {
-      const loginRequest = this.loginForm.value as LoginRequest;
+      const loginRequest = this.loginForm.getRawValue();
 
       this.authService
         .login(loginRequest)
@@ -38,21 +35,8 @@ export class LoginComponent {
           switchMap((response) => this.sessionService.logIn(response.token)),
           takeUntilDestroyed(this.destroyRef)
         )
-        .subscribe({
-          next: () => {
-            this.errorMessage.set(undefined);
-
-            this.router.navigate(['/articles']);
-          },
-          error: (err) => {
-            if (err.status === 401) {
-              this.errorMessage.set('Identifiants incorrects.');
-            } else {
-              this.errorMessage.set(
-                'Le serveur ne répond pas. Réessayez plus tard.'
-              );
-            }
-          },
+        .subscribe(() => {
+          this.router.navigate(['/articles']);
         });
     }
   }

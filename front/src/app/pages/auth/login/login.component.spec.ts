@@ -3,7 +3,7 @@ import { LoginComponent } from './login.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { SessionService } from '../../../core/services/session.service';
 import { Router, provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { LoginRequest } from '../../../models/auth.interface';
 import { By } from '@angular/platform-browser';
 
@@ -62,31 +62,7 @@ describe('LoginComponent', () => {
 
     expect(mockAuthService.login).toHaveBeenCalledWith(validRequest);
     expect(mockSessionService.logIn).toHaveBeenCalledWith(mockToken);
-    expect(component.errorMessage()).toBeUndefined();
     expect(navigateSpy).toHaveBeenCalledWith(['/articles']);
-  });
-
-  it('should set error message on 401 Unauthorized', () => {
-    const navigateSpy = vi.spyOn(router, 'navigate');
-    component.loginForm.setValue({ identifier: 'wrong', password: 'wrong' });
-    mockAuthService.login.mockReturnValue(throwError(() => ({ status: 401 })));
-
-    component.onSubmit();
-
-    expect(component.errorMessage()).toBe('Identifiants incorrects.');
-    expect(mockSessionService.logIn).not.toHaveBeenCalled();
-    expect(navigateSpy).not.toHaveBeenCalled();
-  });
-
-  it('should set generic error message on server error (500)', () => {
-    component.loginForm.setValue({ identifier: 'bug', password: 'bug' });
-    mockAuthService.login.mockReturnValue(throwError(() => ({ status: 500 })));
-
-    component.onSubmit();
-
-    expect(component.errorMessage()).toBe(
-      'Le serveur ne répond pas. Réessayez plus tard.'
-    );
   });
 
   it('should have a link to register page', () => {
