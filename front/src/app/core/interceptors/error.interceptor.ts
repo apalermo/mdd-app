@@ -1,4 +1,3 @@
-// src/app/core/interceptors/error.interceptor.ts
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
 import { inject } from '@angular/core';
@@ -12,7 +11,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       const message =
         error.error?.message || 'Une erreur technique est survenue.';
 
-      if (error.status >= 400 && error.status !== 401) {
+      if (error.status >= 400) {
         notificationService.show(message);
       }
 
