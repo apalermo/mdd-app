@@ -50,6 +50,9 @@ describe('RegisterComponent', () => {
     component.registerForm.setValue(validRequest);
 
     mockAuthService.register.mockReturnValue(of(mockResponse));
+    mockSessionService.logIn.mockReturnValue(
+      of({ id: 1, email: 'new@test.com' })
+    );
 
     component.onSubmit();
 
@@ -59,9 +62,9 @@ describe('RegisterComponent', () => {
   });
 
   it('should have a link to login page', () => {
-    const registerLink = fixture.debugElement.query(
+    const loginLink = fixture.debugElement.query(
       By.css('a[routerLink="/login"]')
     );
-    expect(registerLink).toBeTruthy();
+    expect(loginLink).toBeTruthy();
   });
 });

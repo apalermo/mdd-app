@@ -1,14 +1,25 @@
 <div class="login-container">
-  <h2>Connexion</h2>
+  <header>
+    <h2>Connexion</h2>
+  </header>
 
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <form
+    [formGroup]="loginForm"
+    (ngSubmit)="onSubmit()"
+    aria-label="Formulaire de connexion"
+  >
     <div class="form-group">
-      <label for="identifier">E-mail ou nom d'utilisateur </label>
+      <label for="identifier">E-mail ou nom d'utilisateur</label>
       <input
         id="identifier"
         type="text"
         formControlName="identifier"
         placeholder="SuperDev"
+        aria-required="true"
+        [attr.aria-invalid]="
+          loginForm.get('identifier')?.invalid &&
+          loginForm.get('identifier')?.touched
+        "
       />
     </div>
 
@@ -19,12 +30,29 @@
         type="password"
         formControlName="password"
         placeholder="*****"
+        aria-required="true"
+        [attr.aria-invalid]="
+          loginForm.get('password')?.invalid &&
+          loginForm.get('password')?.touched
+        "
       />
     </div>
 
-    <button type="submit" [disabled]="loginForm.invalid">Se connecter</button>
+    <button
+      type="submit"
+      [disabled]="loginForm.invalid"
+      aria-label="Se connecter à mon compte"
+    >
+      Se connecter
+    </button>
   </form>
-  <div class="auth-links">
-    <p>Pas encore de compte ? <a routerLink="/register">S'inscrire</a></p>
-  </div>
+
+  <nav class="auth-links" aria-label="Liens alternatifs d'authentification">
+    <p>
+      Pas encore de compte ?
+      <a routerLink="/register" aria-label="Aller vers la page d'inscription"
+        >S'inscrire</a
+      >
+    </p>
+  </nav>
 </div>
