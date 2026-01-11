@@ -5,7 +5,7 @@ import { ThemeService } from '../../../core/services/theme.service';
 import { provideRouter, Router } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { of } from 'rxjs';
-import { vi } from 'vitest';
+import { By } from '@angular/platform-browser';
 
 describe('ArticleCreateComponent', () => {
   let component: ArticleCreateComponent;
@@ -32,9 +32,7 @@ describe('ArticleCreateComponent', () => {
 
     fixture = TestBed.createComponent(ArticleCreateComponent);
     component = fixture.componentInstance;
-
     router = TestBed.inject(Router);
-
     fixture.detectChanges();
   });
 
@@ -48,26 +46,50 @@ describe('ArticleCreateComponent', () => {
     expect(component.themes()?.length).toBe(1);
   });
 
-  it('should call articleService.create and navigate on valid submit', () => {
-    const articlePayload = {
-      title: 'Nouveau titre',
-      theme_id: 1,
-      content: 'Contenu de test',
-    };
+  it('should link labels to inputs correctly for screen readers', () => {
+    const titleLabel = fixture.debugElement.query(
+      By.css('label[for="article-title"]')
+    );
+    const titleInput = fixture.debugElement.query(
+      By.css('input#article-title')
+    );
+    expect(titleLabel).toBeTruthy();
+    expect(titleInput).toBeTruthy();
+  });
 
+  it('should call articleService.create and navigate on valid accessible submit', () => {
+    const payload = {
+      title: 'Titre Test',
+      theme_id: 1,
+      content: 'Contenu assez long pour être valide',
+    };
     const navigateSpy = vi.spyOn(router, 'navigate');
 
-    component.articleForm.setValue(articlePayload);
-    mockArticleService.create.mockReturnValue(of(articlePayload));
+    component.articleForm.setValue(payload);
+    mockArticleService.create.mockReturnValue(of(payload));
+    fixture.detectChanges();
 
-    component.onSubmit();
+    const submitBtn = fixture.debugElement.query(
+      By.css('button[aria-label="Publier l\'article"]')
+    );
+    submitBtn.nativeElement.click();
 
-    expect(mockArticleService.create).toHaveBeenCalledWith(articlePayload);
+    expect(mockArticleService.create).toHaveBeenCalledWith(payload);
     expect(navigateSpy).toHaveBeenCalledWith(['/articles']);
   });
 
   it('should have an invalid form when fields are empty', () => {
-    component.articleForm.setValue({ title: '', theme_id: null, content: '' });
+    component.articleForm.get('title')?.setValue('');
     expect(component.articleForm.valid).toBeFalsy();
+  });
+
+  it('should set aria-invalid on invalid fields after they are touched', () => {
+    const titleInput = fixture.debugElement.query(
+      By.css('input#article-title')
+    ).nativeElement;
+    component.articleForm.get('title')?.markAsTouched();
+    component.articleForm.get('title')?.setValue('');
+    fixture.detectChanges();
+    expect(titleInput.getAttribute('aria-invalid')).toBe('true');
   });
 });

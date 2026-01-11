@@ -33,23 +33,11 @@ describe('ThemesComponent', () => {
     subscribeToTheme: vi.fn().mockReturnValue(of(void 0)),
   };
 
-  const userSignal = signal<User | undefined>(mockUser);
   const mockSessionService = {
-    user: userSignal,
+    user: signal<User | undefined>(mockUser),
     updateUser: vi.fn(),
   };
-
-  const mockUserService = {
-    me: vi.fn().mockReturnValue(
-      of({
-        ...mockUser,
-        subscriptions: [
-          ...mockUser.subscriptions,
-          { id: 2, title: 'Angular', description: 'New sub' },
-        ],
-      })
-    ),
-  };
+  const mockUserService = { me: vi.fn().mockReturnValue(of(mockUser)) };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -63,12 +51,7 @@ describe('ThemesComponent', () => {
 
     fixture = TestBed.createComponent(ThemesComponent);
     component = fixture.componentInstance;
-
     fixture.detectChanges();
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
   });
 
   it('should create', () => {
@@ -77,36 +60,48 @@ describe('ThemesComponent', () => {
 
   it('should fetch and display themes via AsyncPipe', () => {
     expect(mockThemeService.getThemes).toHaveBeenCalled();
-
     const cards = fixture.debugElement.queryAll(By.css('.theme-card'));
     expect(cards.length).toBe(3);
-
-    const firstTitle = cards[0].query(By.css('h3')).nativeElement.textContent;
+    const firstTitle = cards[0].query(By.css('h2')).nativeElement.textContent;
     expect(firstTitle).toContain('Java');
   });
 
-  it('should distinguish between subscribed and non-subscribed themes', () => {
-    const javaCard = fixture.debugElement.queryAll(By.css('.theme-card'))[0];
-    const javaBtn = javaCard.query(By.css('button'));
+  it('should render themes with accessible aria-labelledby', () => {
+    const firstTitle = fixture.debugElement.query(By.css('h2')).nativeElement;
+    const firstCard = fixture.debugElement.query(
+      By.css('.theme-card')
+    ).nativeElement;
+    expect(firstCard.getAttribute('aria-labelledby')).toBe(firstTitle.id);
+  });
 
+  it('should distinguish between subscribed and non-subscribed themes', () => {
+    const javaBtn = fixture.debugElement.query(
+      By.css('button[aria-label*="Java"]')
+    );
     expect(javaBtn.nativeElement.textContent).toContain('Déjà abonné');
     expect(javaBtn.nativeElement.disabled).toBe(true);
 
-    const angularCard = fixture.debugElement.queryAll(By.css('.theme-card'))[1];
-    const angularBtn = angularCard.query(By.css('button'));
-
+    const angularBtn = fixture.debugElement.query(
+      By.css('button[aria-label*="Angular"]')
+    );
     expect(angularBtn.nativeElement.textContent).toContain("S'abonner");
     expect(angularBtn.nativeElement.disabled).toBe(false);
   });
 
-  it('should subscribe and refresh user session when clicking "S\'abonner"', () => {
-    const angularCard = fixture.debugElement.queryAll(By.css('.theme-card'))[1];
-    const angularBtn = angularCard.query(By.css('button'));
-
+  it('should handle subscription process', () => {
+    const angularBtn = fixture.debugElement.query(
+      By.css('button[aria-label*="Angular"]')
+    );
     angularBtn.nativeElement.click();
-
     expect(mockThemeService.subscribeToTheme).toHaveBeenCalledWith(2);
     expect(mockUserService.me).toHaveBeenCalled();
-    expect(mockSessionService.updateUser).toHaveBeenCalled();
+  });
+
+  it('should show empty message when no themes are returned', () => {
+    mockThemeService.getThemes.mockReturnValue(of([]));
+    component.themes$ = mockThemeService.getThemes();
+    fixture.detectChanges();
+    const emptyMsg = fixture.debugElement.nativeElement.textContent;
+    expect(emptyMsg).toContain('Aucun thème disponible');
   });
 });

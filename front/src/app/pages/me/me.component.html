@@ -1,45 +1,65 @@
-<div class="profile-container">
-  <a routerLink="/articles" class="back-button">
-    <span class="arrow-icon">←</span>
-  </a>
+<main class="profile-container">
+  <nav class="back-nav" aria-label="Retour">
+    <a
+      routerLink="/articles"
+      class="back-button"
+      aria-label="Retourner à la liste des articles"
+    >
+      <span class="arrow-icon" aria-hidden="true">←</span>
+    </a>
+  </nav>
 
-  <div class="header-actions">
-    <h2>Profil utilisateur</h2>
-  </div>
+  <header class="header-actions">
+    <h1>Profil utilisateur</h1>
+  </header>
 
   @if (user$ | async; as user) {
 
-  <form [formGroup]="form" (ngSubmit)="submit()" class="profile-card">
+  <form
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    class="profile-card"
+    aria-label="Modifier mes informations personnelles"
+  >
     <div class="info-group">
-      <label for="name">Nom d'utilisateur</label>
+      <label for="profile-name">Nom d'utilisateur</label>
       <input
-        id="name"
+        id="profile-name"
         type="text"
         formControlName="name"
         class="form-input"
-        [class.error]="form.get('name')?.invalid && form.get('name')?.touched"
+        aria-required="true"
+        [attr.aria-invalid]="
+          form.get('name')?.invalid && form.get('name')?.touched
+        "
       />
     </div>
 
     <div class="info-group">
-      <label for="email">Adresse e-mail</label>
+      <label for="profile-email">Adresse e-mail</label>
       <input
-        id="email"
+        id="profile-email"
         type="email"
         formControlName="email"
         class="form-input"
-        [class.error]="form.get('email')?.invalid && form.get('email')?.touched"
+        aria-required="true"
+        [attr.aria-invalid]="
+          form.get('email')?.invalid && form.get('email')?.touched
+        "
       />
     </div>
 
     <div class="info-group">
-      <label for="password">Nouveau mot de passe (optionnel)</label>
+      <label for="profile-password">Nouveau mot de passe (optionnel)</label>
       <input
-        id="password"
+        id="profile-password"
         type="password"
         formControlName="password"
         class="form-input"
         placeholder="••••••••"
+        [attr.aria-invalid]="
+          form.get('password')?.invalid && form.get('password')?.touched
+        "
       />
     </div>
 
@@ -47,16 +67,17 @@
       type="submit"
       class="btn-save"
       [disabled]="form.invalid || form.pristine"
+      aria-label="Enregistrer les modifications du profil"
     >
       Sauvegarder
     </button>
   </form>
 
-  <div class="subscriptions-section">
-    <h3>Abonnements</h3>
-    <div class="subscriptions-grid">
+  <section class="subscriptions-section" aria-labelledby="subs-title">
+    <h2 id="subs-title">Mes Abonnements</h2>
+    <div class="subscriptions-grid" role="list">
       @for (sub of user.subscriptions; track sub.id) {
-      <div class="subscription-item">
+      <div class="subscription-item" role="listitem">
         <div class="sub-info">
           <span class="sub-title">{{ sub.title }}</span>
           <span class="sub-desc">{{ sub.description }}</span>
@@ -65,19 +86,20 @@
           class="unsubscribe-btn"
           type="button"
           (click)="unsubscribe(sub.id)"
+          [attr.aria-label]="'Se désabonner du thème ' + sub.title"
         >
           Se désabonner
         </button>
       </div>
       } @empty {
-      <p class="no-subs">Vous n'êtes abonné à aucun thème.</p>
+      <p class="no-subs" role="status">Vous n'êtes abonné à aucun thème.</p>
       }
     </div>
-  </div>
+  </section>
 
   } @else {
-  <div class="loading">
+  <div class="loading" role="status" aria-live="polite">
     <p>Chargement de vos informations...</p>
   </div>
   }
-</div>
+</main>

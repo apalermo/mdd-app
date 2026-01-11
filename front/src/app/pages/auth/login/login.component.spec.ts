@@ -71,4 +71,13 @@ describe('LoginComponent', () => {
     );
     expect(registerLink).toBeTruthy();
   });
+
+  it('should disable submit button when form is invalid', () => {
+    const submitBtn = fixture.debugElement.query(
+      By.css('button[type="submit"]')
+    );
+    component.loginForm.setValue({ identifier: '', password: '' });
+    fixture.detectChanges();
+    expect(submitBtn.nativeElement.disabled).toBe(true);
+  });
 });

@@ -1,26 +1,44 @@
-<div class="themes-container">
-  <div class="themes-grid">
+<main class="themes-container">
+  <header class="sr-only">
+    <h1>Liste des thèmes disponibles</h1>
+  </header>
+
+  <div class="themes-grid" role="list">
     @for (theme of (themes$ | async); track theme.id) {
 
-    <div class="theme-card">
+    <section
+      class="theme-card"
+      role="listitem"
+      [attr.aria-labelledby]="'theme-title-' + theme.id"
+    >
       <div class="card-content">
-        <h3>{{ theme.title }}</h3>
+        <h2 [id]="'theme-title-' + theme.id">{{ theme.title }}</h2>
         <p class="description">{{ theme.description }}</p>
       </div>
 
       <div class="card-actions">
         @if (isSubscribed(theme.id)) {
-        <button class="btn-subscribed" disabled>Déjà abonné</button>
+        <button
+          class="btn-subscribed"
+          disabled
+          [attr.aria-label]="'Vous êtes déjà abonné au thème ' + theme.title"
+        >
+          Déjà abonné
+        </button>
         } @else {
-        <button class="btn-subscribe" (click)="subscribe(theme.id)">
+        <button
+          class="btn-subscribe"
+          (click)="subscribe(theme.id)"
+          [attr.aria-label]="'S\'abonner au thème ' + theme.title"
+        >
           S'abonner
         </button>
         }
       </div>
-    </div>
+    </section>
 
     } @empty {
-    <p>Aucun thème disponible.</p>
+    <p role="status">Aucun thème disponible pour le moment.</p>
     }
   </div>
-</div>
+</main>

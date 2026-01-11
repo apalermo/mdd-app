@@ -1,6 +1,12 @@
-<header class="main-header">
+<header class="main-header" role="banner">
   <div class="logo-container">
-    <a routerLink="showNavigation() ? '/articles' : '/'" (click)="closeMenu()">
+    <a
+      [routerLink]="
+        sessionService.isLogged() && showNavigation() ? '/articles' : '/'
+      "
+      (click)="closeMenu()"
+      aria-label="Retour à l'accueil"
+    >
       <img src="logo.png" alt="MDD Logo" class="logo" />
     </a>
   </div>
@@ -8,17 +14,25 @@
   @if (sessionService.isLogged() && showNavigation()) {
 
   <button
+    #burgerBtn
     class="burger-btn"
     (click)="toggleMobileMenu()"
     [attr.aria-expanded]="isMobileMenuOpen()"
-    aria-label="Ouvrir le menu de navigation"
+    aria-controls="main-navigation"
+    aria-label="Menu principal"
   >
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
+    <span class="bar" aria-hidden="true"></span>
+    <span class="bar" aria-hidden="true"></span>
+    <span class="bar" aria-hidden="true"></span>
   </button>
 
-  <nav class="navigation" [class.active]="isMobileMenuOpen()">
+  <nav
+    #navContainer
+    id="main-navigation"
+    class="navigation"
+    [class.active]="isMobileMenuOpen()"
+    aria-label="Navigation principale"
+  >
     <ul>
       @for (link of navLinks; track link.label) {
       <li>
@@ -36,12 +50,20 @@
           routerLink="/me"
           routerLinkActive="active-link"
           (click)="closeMenu()"
+          aria-label="Accéder à mon profil"
         >
           <span class="user-icon" aria-hidden="true">👤</span> Profil
         </a>
       </li>
       <li>
-        <span class="logout-link" (click)="logOut()">Se déconnecter</span>
+        <button
+          type="button"
+          class="logout-link-btn"
+          (click)="logOut()"
+          aria-label="Se déconnecter de l'application"
+        >
+          Se déconnecter
+        </button>
       </li>
     </ul>
   </nav>

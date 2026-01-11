@@ -1,28 +1,42 @@
 @if (article(); as item) {
-<div class="article-detail-container">
-  <div class="back-nav">
-    <a routerLink="/articles" class="back-link">←</a>
-  </div>
+<main class="article-detail-container">
+  <nav class="back-nav" aria-label="Retour">
+    <a
+      routerLink="/articles"
+      class="back-link"
+      aria-label="Retourner à la liste des articles"
+      >←</a
+    >
+  </nav>
 
-  <header class="article-header">
-    <h2>{{ item.title }}</h2>
-    <div class="meta-row">
-      <span class="date">{{ item.created_at | date : "dd/MM/yyyy" }}</span>
-      <span class="author">Auteur : {{ item.author_name }}</span>
-      <span class="theme-tag">{{ item.theme.title }}</span>
+  <article>
+    <header class="article-header">
+      <h1>{{ item.title }}</h1>
+      <div class="meta-row">
+        <span class="date">
+          <span class="sr-only">Publié le </span>
+          {{ item.created_at | date : "dd/MM/yyyy" }}
+        </span>
+        <span class="author">Auteur : {{ item.author_name }}</span>
+        <span
+          class="theme-tag"
+          [attr.aria-label]="'Thématique : ' + item.theme.title"
+          >{{ item.theme.title }}</span
+        >
+      </div>
+    </header>
+
+    <div class="content">
+      {{ item.content }}
     </div>
-  </header>
-
-  <article class="content">
-    {{ item.content }}
   </article>
 
-  <hr class="separator" />
+  <hr class="separator" aria-hidden="true" />
 
-  <section class="comments-section">
-    <h3>Commentaires</h3>
+  <section class="comments-section" aria-labelledby="comments-title">
+    <h2 id="comments-title">Commentaires</h2>
 
-    <div class="comments-list">
+    <div class="comments-list" role="log" aria-live="polite">
       @for (comment of item.comments; track $index) {
       <div class="comment-item">
         <p class="comment-author">{{ comment.author_name }}</p>
@@ -34,23 +48,36 @@
       <p class="no-comments">Aucun commentaire pour le moment.</p>
       }
     </div>
+
     <form
       [formGroup]="commentForm"
       (ngSubmit)="onSubmitComment()"
       class="comment-form"
+      aria-label="Ajouter un commentaire"
     >
       <div class="input-wrapper">
+        <label for="comment-content" class="sr-only">Votre commentaire</label>
         <textarea
+          id="comment-content"
           formControlName="content"
           placeholder="Écrivez ici votre commentaire"
           rows="3"
+          aria-required="true"
+          [attr.aria-invalid]="
+            commentForm.get('content')?.invalid &&
+            commentForm.get('content')?.touched
+          "
+        ></textarea>
+        <button
+          type="submit"
+          [disabled]="commentForm.invalid"
+          class="send-btn"
+          aria-label="Envoyer le commentaire"
         >
-        </textarea>
-        <button type="submit" [disabled]="commentForm.invalid" class="send-btn">
-          <span class="icon-send">➤</span>
+          <span class="icon-send" aria-hidden="true">➤</span>
         </button>
       </div>
     </form>
   </section>
-</div>
+</main>
 }
