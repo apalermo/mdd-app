@@ -47,4 +47,12 @@ describe('ArticlesComponent', () => {
     const title = cards[0].query(By.css('h3')).nativeElement.textContent;
     expect(title).toContain('Comprendre les Signals en Angular');
   });
+
+  it('should have accessible links for each article', () => {
+    const firstCard = fixture.debugElement.query(By.css('.article-card'));
+    expect(firstCard.nativeElement.tagName).toBe('A');
+    expect(firstCard.nativeElement.getAttribute('aria-label')).toContain(
+      'Comprendre les Signals en Angular'
+    );
+  });
 });

@@ -1,34 +1,52 @@
-<div class="articles-container">
+<main class="articles-container">
   <div class="top-bar">
-    <button class="btn-create" routerLink="/articles/create">
+    <a
+      class="btn-create"
+      routerLink="/articles/create"
+      role="button"
+      aria-label="Créer un nouvel article"
+    >
       Créer un article
-    </button>
+    </a>
 
     <div class="sort-wrapper">
-      <label for="sort">Trier par</label>
-      <select id="sort" (change)="updateSort($event)">
+      <label for="sort-select">Trier par</label>
+      <select
+        id="sort-select"
+        (change)="updateSort($event)"
+        aria-label="Changer l'ordre de tri des articles"
+      >
         <option value="date">Date</option>
         <option value="title">Titre</option>
       </select>
     </div>
   </div>
 
-  <div class="articles-grid">
+  <div class="articles-grid" role="list">
     @for (article of articles(); track article.id) {
-    <div class="article-card" [routerLink]="['/articles/', article.id]">
-      <div class="card-content">
+    <a
+      class="article-card"
+      [routerLink]="['/articles/', article.id]"
+      [attr.aria-label]="'Lire l\'article : ' + article.title"
+      role="listitem"
+    >
+      <article class="card-content">
         <h3>{{ article.title }}</h3>
         <div class="meta-row">
-          <span class="date">{{
-            article.created_at | date : "dd/MM/yyyy"
-          }}</span>
-          <span class="author">{{ article.author_name }}</span>
+          <span class="date">
+            <span class="sr-only">Publié le </span>
+            {{ article.created_at | date : "dd/MM/yyyy" }}
+          </span>
+          <span class="author">
+            <span class="sr-only">Par </span>
+            {{ article.author_name }}
+          </span>
         </div>
         <p class="description">{{ article.content }}</p>
-      </div>
-    </div>
+      </article>
+    </a>
     } @empty {
-    <p class="no-data">Aucun article n'a encore été publié.</p>
+    <p class="no-data" role="status">Aucun article n'a encore été publié.</p>
     }
   </div>
-</div>
+</main>

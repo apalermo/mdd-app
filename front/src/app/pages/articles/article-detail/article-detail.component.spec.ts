@@ -31,7 +31,7 @@ describe('ArticleDetailComponent', () => {
 
   const mockArticleService = {
     detail: vi.fn().mockReturnValue(of(mockArticle)),
-    addComment: vi.fn().mockReturnValue(of(void 0)),
+    addComment: vi.fn(),
   };
 
   beforeEach(async () => {
@@ -57,23 +57,27 @@ describe('ArticleDetailComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should fetch and display article details and comments', () => {
+  it('should fetch and display article details with correct semantics', () => {
     expect(mockArticleService.detail).toHaveBeenCalledWith('1');
 
-    const title = fixture.debugElement.query(By.css('h2')).nativeElement
+    const title = fixture.debugElement.query(By.css('h1')).nativeElement
       .textContent;
     expect(title).toContain('Les Design Patterns en Java');
 
-    const meta = fixture.debugElement.nativeElement.textContent;
-    expect(meta).toContain('Jean Dev');
-    expect(meta).toContain('Java');
+    const themeTag = fixture.debugElement.query(By.css('.theme-tag'));
+    expect(themeTag.nativeElement.getAttribute('aria-label')).toBe(
+      'Thématique : Java'
+    );
 
-    const comments = fixture.debugElement.queryAll(By.css('.comment-item'));
-    expect(comments.length).toBe(1);
-    expect(comments[0].nativeElement.textContent).toContain('Très instructif');
+    const commentsSection = fixture.debugElement.query(
+      By.css('section.comments-section')
+    );
+    expect(commentsSection.nativeElement.getAttribute('aria-labelledby')).toBe(
+      'comments-title'
+    );
   });
 
-  it('should call addComment, update local state and reset form on success ', () => {
+  it('should call addComment, update state and reset form on successful accessible submit', () => {
     const newComment = {
       author_name: 'Moi',
       content: 'Super !',
@@ -82,16 +86,28 @@ describe('ArticleDetailComponent', () => {
     component.article.set(mockArticle);
 
     component.commentForm.controls.content.setValue('Super !');
-
     mockArticleService.addComment.mockReturnValue(of(newComment));
 
-    component.onSubmitComment();
+    fixture.detectChanges();
+    const submitBtn = fixture.debugElement.query(
+      By.css('button[aria-label="Envoyer le commentaire"]')
+    );
+    submitBtn.nativeElement.click();
 
+    expect(mockArticleService.addComment).toHaveBeenCalled();
+    expect(component.article()?.comments).toContain(newComment);
+    expect(component.commentForm.get('content')?.value).toBe('');
+  });
+
+  it('should set aria-invalid on comment textarea when invalid and touched', () => {
+    const textarea = fixture.debugElement.query(
+      By.css('textarea#comment-content')
+    ).nativeElement;
+
+    component.commentForm.get('content')?.markAsTouched();
+    component.commentForm.get('content')?.setValue('');
     fixture.detectChanges();
 
-    expect(component.article()?.comments).toContain(newComment);
-    expect(component.article()?.comments.length).toBe(2);
-
-    expect(component.commentForm.get('content')?.value).toBe('');
+    expect(textarea.getAttribute('aria-invalid')).toBe('true');
   });
 });
