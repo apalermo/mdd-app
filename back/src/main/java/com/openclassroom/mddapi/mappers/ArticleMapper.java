@@ -20,7 +20,7 @@ public class ArticleMapper {
                 .id(article.getId())
                 .title(article.getTitle())
                 .content(article.getContent())
-                .authorName(article.getAuthor() != null ? article.getAuthor().getUsername() : null)
+                .authorName(article.getAuthor() != null ? article.getAuthor().getName() : null)
                 .theme(ThemeResponse.builder()
                         .id(article.getTheme().getId())
                         .title(article.getTheme().getTitle())
@@ -45,7 +45,7 @@ public class ArticleMapper {
         return CommentResponse.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
-                .authorName(comment.getAuthor().getUsername())
+                .authorName(comment.getAuthor().getName())
                 .createdAt(comment.getCreatedAt())
                 .build();
     }
