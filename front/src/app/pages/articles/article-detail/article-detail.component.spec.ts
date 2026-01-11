@@ -43,9 +43,7 @@ describe('ArticleDetailComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            snapshot: {
-              paramMap: convertToParamMap({ id: '1' }),
-            },
+            snapshot: { paramMap: convertToParamMap({ id: '1' }) },
             paramMap: of(convertToParamMap({ id: '1' })),
           },
         },
@@ -57,12 +55,21 @@ describe('ArticleDetailComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should fetch and display article details with correct semantics', () => {
+  it('should fetch and display article details with correct content and semantics', () => {
     expect(mockArticleService.detail).toHaveBeenCalledWith('1');
 
     const title = fixture.debugElement.query(By.css('h1')).nativeElement
       .textContent;
     expect(title).toContain('Les Design Patterns en Java');
+
+    const meta = fixture.debugElement.nativeElement.textContent;
+    expect(meta).toContain('Jean Dev');
+
+    const comments = fixture.debugElement.queryAll(By.css('.comment-item'));
+    expect(comments.length).toBe(1);
+    expect(comments[0].nativeElement.textContent).toContain(
+      'Très instructif, merci !'
+    );
 
     const themeTag = fixture.debugElement.query(By.css('.theme-tag'));
     expect(themeTag.nativeElement.getAttribute('aria-label')).toBe(
