@@ -14,6 +14,7 @@
   @if (sessionService.isLogged() && showNavigation()) {
 
   <button
+    #burgerBtn
     class="burger-btn"
     (click)="toggleMobileMenu()"
     [attr.aria-expanded]="isMobileMenuOpen()"
@@ -26,6 +27,7 @@
   </button>
 
   <nav
+    #navContainer
     id="main-navigation"
     class="navigation"
     [class.active]="isMobileMenuOpen()"
