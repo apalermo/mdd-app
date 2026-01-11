@@ -17,10 +17,6 @@
       <input id="password" type="password" formControlName="password" />
     </div>
 
-    @if(errorMessage()){
-    <p class="error-message">{{ errorMessage() }}</p>
-    }
-
     <button type="submit" [disabled]="registerForm.invalid" class="btn-submit">
       S'inscrire
     </button>

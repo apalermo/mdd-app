@@ -3,8 +3,9 @@ import { MeComponent } from './me.component';
 import { UserService } from '../../core/services/user.service';
 import { SessionService } from '../../core/services/session.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { User } from '../../models/user.interface';
 import { signal } from '@angular/core';
 import { By } from '@angular/platform-browser';
@@ -34,6 +35,10 @@ describe('MeComponent', () => {
     updateUser: vi.fn(),
   };
 
+  const mockNotificationService = {
+    show: vi.fn(),
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MeComponent],
@@ -42,6 +47,7 @@ describe('MeComponent', () => {
         { provide: UserService, useValue: mockUserService },
         { provide: SessionService, useValue: mockSessionService },
         { provide: ThemeService, useValue: mockThemeService },
+        { provide: NotificationService, useValue: mockNotificationService },
       ],
     }).compileComponents();
 
@@ -67,7 +73,7 @@ describe('MeComponent', () => {
     });
   });
 
-  it('should refresh data when clicking unsubscribe', () => {
+  it('should refresh data and show notification when clicking unsubscribe', () => {
     const btn = fixture.debugElement.query(By.css('.unsubscribe-btn'));
     expect(btn).toBeTruthy();
 
@@ -80,17 +86,18 @@ describe('MeComponent', () => {
 
       expect(mockThemeService.unsubscribe).toHaveBeenCalledWith(10);
       expect(mockUserService.me).toHaveBeenCalled();
-
-      expect(component.successMsg()).toBe('Désabonnement pris en compte.');
+      expect(mockNotificationService.show).toHaveBeenCalledWith(
+        'Désabonnement pris en compte.'
+      );
     }
   });
 
-  it('should call update and show success message', () => {
+  it('should call update and show notification on success', () => {
     const newName = 'Dev Updated';
     component.form.controls['name'].setValue(newName);
+    component.form.markAsDirty();
 
     component.submit();
-    fixture.detectChanges();
 
     expect(mockUserService.update).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -99,37 +106,8 @@ describe('MeComponent', () => {
       })
     );
     expect(mockSessionService.updateUser).toHaveBeenCalled();
-
-    expect(component.successMsg()).toContain('enregistrées');
-
-    const successMsg = fixture.debugElement.query(By.css('.msg-success'));
-    expect(successMsg).toBeTruthy();
-  });
-
-  it('should display error message if update fails', () => {
-    mockUserService.update.mockReturnValueOnce(
-      throwError(() => new Error('Error'))
+    expect(mockNotificationService.show).toHaveBeenCalledWith(
+      'Vos modifications ont été enregistrées !'
     );
-
-    component.submit();
-    fixture.detectChanges();
-
-    expect(component.errorMsg()).toContain('Une erreur est survenue');
-  });
-
-  it('should not call update and show error message if form is invalid', () => {
-    component.form.controls['email'].setValue('');
-
-    component.submit();
-    fixture.detectChanges();
-
-    expect(mockUserService.update).not.toHaveBeenCalled();
-
-    expect(component.errorMsg()).toBe(
-      'Veuillez vérifier les champs du formulaire.'
-    );
-
-    const errorMsg = fixture.debugElement.query(By.css('.msg-error'));
-    expect(errorMsg).toBeTruthy();
   });
 });

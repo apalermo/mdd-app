@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RegisterComponent } from './register.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router, provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { RegisterRequest } from '../../../models/auth.interface';
 import { SessionService } from '../../../core/services/session.service';
 import { By } from '@angular/platform-browser';
@@ -39,7 +39,7 @@ describe('RegisterComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call authService, log user automatically and navigate to /me', () => {
+  it('should call authService, log user automatically and navigate to /articles', () => {
     const navigateSpy = vi.spyOn(router, 'navigate');
     const validRequest: RegisterRequest = {
       email: 'new@test.com',
@@ -55,43 +55,7 @@ describe('RegisterComponent', () => {
 
     expect(mockAuthService.register).toHaveBeenCalledWith(validRequest);
     expect(mockSessionService.logIn).toHaveBeenCalledWith(mockResponse.token);
-
     expect(navigateSpy).toHaveBeenCalledWith(['/articles']);
-    expect(component.errorMessage()).toBeUndefined();
-  });
-
-  it('should display duplicate error on 400 Bad Request', () => {
-    component.registerForm.setValue({
-      email: 'taken@test.com',
-      name: 'Taken',
-      password: '123',
-    });
-    mockAuthService.register.mockReturnValue(
-      throwError(() => ({ status: 400 }))
-    );
-
-    component.onSubmit();
-
-    expect(component.errorMessage()).toBe(
-      "Ce nom d'utilisateur ou cet e-mail est déjà utilisé."
-    );
-  });
-
-  it('should display generic error on other failures', () => {
-    component.registerForm.setValue({
-      email: 'bug@test.com',
-      name: 'Bug',
-      password: '123',
-    });
-    mockAuthService.register.mockReturnValue(
-      throwError(() => ({ status: 500 }))
-    );
-
-    component.onSubmit();
-
-    expect(component.errorMessage()).toBe(
-      "Une erreur est survenue lors de l'inscription. Réessayez plus tard."
-    );
   });
 
   it('should have a link to login page', () => {

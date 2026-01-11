@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SessionService } from './core/services/session.service';
 import { UserService } from './core/services/user.service';
+import { NotificationService } from './core/services/notification.service';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,8 @@ import { UserService } from './core/services/user.service';
 export class App implements OnInit {
   private readonly sessionService = inject(SessionService);
   private readonly userService = inject(UserService);
+
+  protected readonly notificationService = inject(NotificationService);
 
   public ngOnInit(): void {
     this.tryRestoreSession();

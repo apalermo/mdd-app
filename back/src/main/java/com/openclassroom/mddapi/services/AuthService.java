@@ -4,8 +4,8 @@ import com.openclassroom.mddapi.dtos.auth.AuthResponse;
 import com.openclassroom.mddapi.dtos.auth.LoginRequest;
 import com.openclassroom.mddapi.dtos.auth.RegisterRequest;
 import com.openclassroom.mddapi.entities.User;
+import com.openclassroom.mddapi.exceptions.BadCredentialsException;
 import com.openclassroom.mddapi.exceptions.ConflictException;
-import com.openclassroom.mddapi.exceptions.NotFoundException;
 import com.openclassroom.mddapi.repositories.UserRepository;
 import com.openclassroom.mddapi.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -46,18 +46,22 @@ public class AuthService {
     }
 
     public AuthResponse authenticate(LoginRequest request) {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getIdentifier(),
+                            request.getPassword()
+                    )
+            );
 
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getIdentifier(),
-                        request.getPassword()
-                )
-        );
+            var user = userRepository.findByEmailOrName(request.getIdentifier(), request.getIdentifier())
+                    .orElseThrow(() -> new BadCredentialsException("Identifiants incorrects"));
 
-        var user = userRepository.findByEmailOrName(request.getIdentifier(), request.getIdentifier())
-                .orElseThrow(() -> new NotFoundException("Utilisateur inconnu"));
+            var jwtToken = jwtService.generateToken(user);
+            return AuthResponse.builder().token(jwtToken).build();
 
-        var jwtToken = jwtService.generateToken(user);
-        return AuthResponse.builder().token(jwtToken).build();
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Identifiants incorrects");
+        }
     }
 }
