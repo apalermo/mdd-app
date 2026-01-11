@@ -63,6 +63,20 @@ $text-color: var(--text-dark, #333);
   .overlay { display: none; }
 }
 
+.logout-link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--danger-color);
+  cursor: pointer;
+  font-weight: 500;
+  text-align: left;
+  width: 100%;
+  
+  &:hover { opacity: 0.8; }
+}
+
 
 @media (max-width: $mobile-breakpoint) {
   .main-header {

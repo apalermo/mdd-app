@@ -32,6 +32,10 @@ describe('HeaderComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
@@ -43,7 +47,7 @@ describe('HeaderComponent', () => {
     expect(component.isMobileMenuOpen()).toBe(true);
 
     fixture.detectChanges();
-    const nav = fixture.debugElement.query(By.css('.navigation'));
+    const nav = fixture.debugElement.query(By.css('#main-navigation'));
     expect(nav.classes['active']).toBe(true);
 
     component.closeMenu();
@@ -52,7 +56,6 @@ describe('HeaderComponent', () => {
 
   it('should have correct href attributes', () => {
     const links = fixture.debugElement.queryAll(By.css('a'));
-
     const hrefs = links.map((l) => l.nativeElement.getAttribute('href'));
 
     expect(hrefs).toContain('/articles');
@@ -60,12 +63,14 @@ describe('HeaderComponent', () => {
     expect(hrefs).toContain('/me');
   });
 
-  it('should call logOut and navigate to root when logout link is clicked', () => {
+  it('should call logOut and navigate to root when logout button is clicked', () => {
     const navigateSpy = vi.spyOn(component['router'], 'navigate');
-    const logoutLink = fixture.debugElement.query(By.css('.logout-link'));
+    const logoutBtn = fixture.debugElement.query(
+      By.css('button[aria-label="Se déconnecter de l\'application"]')
+    );
 
-    expect(logoutLink).toBeTruthy();
-    logoutLink.nativeElement.click();
+    expect(logoutBtn).toBeTruthy();
+    logoutBtn.nativeElement.click();
 
     expect(mockSessionService.logOut).toHaveBeenCalled();
     expect(navigateSpy).toHaveBeenCalledWith(['/']);
@@ -75,8 +80,10 @@ describe('HeaderComponent', () => {
     isLoggedSignal.set(false);
     fixture.detectChanges();
 
-    const nav = fixture.debugElement.query(By.css('.navigation'));
-    const burger = fixture.debugElement.query(By.css('.burger-btn'));
+    const nav = fixture.debugElement.query(By.css('#main-navigation'));
+    const burger = fixture.debugElement.query(
+      By.css('button[aria-label="Menu principal"]')
+    );
 
     expect(nav).toBeNull();
     expect(burger).toBeNull();
