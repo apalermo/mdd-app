@@ -9,16 +9,39 @@
       Créer un article
     </a>
 
-    <div class="sort-wrapper">
-      <label for="sort-select">Trier par</label>
-      <select
-        id="sort-select"
-        (change)="updateSort($event)"
-        aria-label="Changer l'ordre de tri des articles"
+    <div class="sort-controls">
+      <span class="sort-label">Trier par</span>
+
+      <button
+        type="button"
+        class="sort-toggle-btn"
+        (click)="toggleSortCriteria()"
+        [attr.aria-label]="
+          'Critère de tri actuel : ' +
+          (sortBy() === 'date' ? 'Date' : 'Titre') +
+          '. Cliquer pour changer.'
+        "
       >
-        <option value="date">Date</option>
-        <option value="title">Titre</option>
-      </select>
+        {{ sortBy() === "date" ? "Date" : "Titre" }}
+      </button>
+
+      <button
+        type="button"
+        class="direction-btn"
+        (click)="toggleDirection()"
+        [attr.aria-label]="
+          sortDirection() === 'asc'
+            ? 'Actuellement trié par ordre croissant. Cliquer pour trier par ordre décroissant.'
+            : 'Actuellement trié par ordre décroissant. Cliquer pour trier par ordre croissant.'
+        "
+      >
+        <span
+          class="arrow"
+          [class.asc]="sortDirection() === 'asc'"
+          aria-hidden="true"
+          >↓</span
+        >
+      </button>
     </div>
   </div>
 

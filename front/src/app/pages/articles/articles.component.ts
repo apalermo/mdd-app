@@ -1,8 +1,8 @@
 import { Component, inject, signal, computed } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { ArticleService } from '../../core/services/article.service';
 import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { ArticleService } from '../../core/services/article.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-articles',
@@ -14,26 +14,37 @@ import { DatePipe } from '@angular/common';
 export class ArticlesComponent {
   private readonly articleService = inject(ArticleService);
 
-  private readonly articlesRaw = toSignal(this.articleService.all(), {
+  public readonly sortBy = signal<'date' | 'title'>('date');
+  public readonly sortDirection = signal<'asc' | 'desc'>('desc');
+
+  private readonly rawArticles = toSignal(this.articleService.all(), {
     initialValue: [],
   });
 
-  public sortBy = signal<'date' | 'title'>('date');
+  public readonly articles = computed(() => {
+    const list = [...this.rawArticles()];
+    const criteria = this.sortBy();
+    const direction = this.sortDirection();
 
-  public articles = computed(() => {
-    const list = [...this.articlesRaw()];
     return list.sort((a, b) => {
-      if (this.sortBy() === 'date') {
-        return (
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
+      let comparison = 0;
+      if (criteria === 'date') {
+        comparison =
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      } else {
+        comparison = a.title.localeCompare(b.title);
       }
-      return a.title.localeCompare(b.title);
+      return direction === 'asc' ? comparison : -comparison;
     });
   });
 
-  public updateSort(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value as 'date' | 'title';
-    this.sortBy.set(value);
+  public toggleSortCriteria(): void {
+    this.sortBy.update((current) => (current === 'date' ? 'title' : 'date'));
+  }
+
+  public toggleDirection(): void {
+    this.sortDirection.update((current) =>
+      current === 'asc' ? 'desc' : 'asc'
+    );
   }
 }
