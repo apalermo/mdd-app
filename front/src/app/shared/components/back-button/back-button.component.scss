@@ -1,0 +1,24 @@
+:host {
+  display: block; // Le composant devient un bloc conteneur propre
+}
+
+.back-link {
+  font-size: 2rem;
+  text-decoration: none;
+  color: var(--text-dark);
+  display: inline-block; // Permet les transformations (scale, translate)
+  transition: transform 0.2s ease;
+  line-height: 1; // Évite les décalages verticaux fantômes
+
+  &:hover, &:focus {
+    transform: translateX(-5px);
+    outline: none;
+    color: var(--primary-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+}

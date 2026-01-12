@@ -6,11 +6,12 @@ import { SessionService } from '../../core/services/session.service';
 import { UserService } from '../../core/services/user.service';
 import { Theme } from '../../models/theme.interface';
 import { Observable } from 'rxjs';
+import { ThemeCardComponent } from '../../shared/components/theme-card/theme-card.component';
 
 @Component({
   selector: 'app-themes',
   standalone: true,
-  imports: [AsyncPipe],
+  imports: [AsyncPipe, ThemeCardComponent],
   templateUrl: './themes.component.html',
   styleUrls: ['./themes.component.scss'],
 })

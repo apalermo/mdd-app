@@ -1,0 +1,10 @@
+<section class="theme-card" [attr.aria-labelledby]="'theme-title-' + id()">
+  <div class="card-content">
+    <h2 [id]="'theme-title-' + id()">{{ title() }}</h2>
+    <p class="description">{{ description() }}</p>
+  </div>
+
+  <div class="card-actions">
+    <ng-content select="[action-button]"></ng-content>
+  </div>
+</section>
