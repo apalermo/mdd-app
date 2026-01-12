@@ -1,17 +1,12 @@
 @if (article(); as item) {
 <main class="article-detail-container">
-  <nav class="back-nav" aria-label="Retour">
-    <a
-      routerLink="/articles"
-      class="back-link"
-      aria-label="Retourner à la liste des articles"
-      >←</a
-    >
-  </nav>
-
   <article>
     <header class="article-header">
-      <h1>{{ item.title }}</h1>
+      <div class="title-row">
+        <app-back-button destination="/articles"></app-back-button>
+        <h1>{{ item.title }}</h1>
+      </div>
+
       <div class="meta-row">
         <span class="date">
           <span class="sr-only">Publié le </span>

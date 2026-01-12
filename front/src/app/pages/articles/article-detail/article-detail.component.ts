@@ -1,16 +1,17 @@
 import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ArticleService } from '../../../core/services/article.service';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Article, ArticleComment } from '../../../models/article.interface';
 import { switchMap, map, filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { BackButtonComponent } from '../../../shared/components/back-button/back-button.component';
 
 @Component({
   selector: 'app-article-detail',
   standalone: true,
-  imports: [RouterLink, DatePipe, ReactiveFormsModule],
+  imports: [BackButtonComponent, DatePipe, ReactiveFormsModule],
   templateUrl: './article-detail.component.html',
   styleUrls: ['./article-detail.component.scss'],
 })
