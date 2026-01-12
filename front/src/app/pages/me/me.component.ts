@@ -1,5 +1,4 @@
 import { Component, inject, DestroyRef } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, switchMap, tap } from 'rxjs';
@@ -9,11 +8,12 @@ import { SessionService } from '../../core/services/session.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { UserUpdateRequest } from '../../models/user-update-request.interface';
+import { ThemeCardComponent } from '../../shared/components/theme-card/theme-card.component';
 
 @Component({
   selector: 'app-me',
   standalone: true,
-  imports: [RouterLink, AsyncPipe, ReactiveFormsModule],
+  imports: [AsyncPipe, ReactiveFormsModule, ThemeCardComponent],
   templateUrl: './me.component.html',
   styleUrls: ['./me.component.scss'],
 })

@@ -1,14 +1,4 @@
 <main class="profile-container">
-  <nav class="back-nav" aria-label="Retour">
-    <a
-      routerLink="/articles"
-      class="back-button"
-      aria-label="Retourner à la liste des articles"
-    >
-      <span class="arrow-icon" aria-hidden="true">←</span>
-    </a>
-  </nav>
-
   <header class="header-actions">
     <h1>Profil utilisateur</h1>
   </header>
@@ -27,7 +17,6 @@
         id="profile-name"
         type="text"
         formControlName="name"
-        class="form-input"
         aria-required="true"
         [attr.aria-invalid]="
           form.get('name')?.invalid && form.get('name')?.touched
@@ -41,7 +30,6 @@
         id="profile-email"
         type="email"
         formControlName="email"
-        class="form-input"
         aria-required="true"
         [attr.aria-invalid]="
           form.get('email')?.invalid && form.get('email')?.touched
@@ -55,11 +43,7 @@
         id="profile-password"
         type="password"
         formControlName="password"
-        class="form-input"
         placeholder="••••••••"
-        [attr.aria-invalid]="
-          form.get('password')?.invalid && form.get('password')?.touched
-        "
       />
     </div>
 
@@ -74,23 +58,23 @@
   </form>
 
   <section class="subscriptions-section" aria-labelledby="subs-title">
-    <h2 id="subs-title">Mes Abonnements</h2>
+    <h2 id="subs-title">Abonnements</h2>
     <div class="subscriptions-grid" role="list">
       @for (sub of user.subscriptions; track sub.id) {
-      <div class="subscription-item" role="listitem">
-        <div class="sub-info">
-          <span class="sub-title">{{ sub.title }}</span>
-          <span class="sub-desc">{{ sub.description }}</span>
-        </div>
+      <app-theme-card
+        [id]="sub.id"
+        [title]="sub.title"
+        [description]="sub.description"
+      >
         <button
-          class="unsubscribe-btn"
-          type="button"
+          action-button
+          class="btn-primary"
           (click)="unsubscribe(sub.id)"
           [attr.aria-label]="'Se désabonner du thème ' + sub.title"
         >
           Se désabonner
         </button>
-      </div>
+      </app-theme-card>
       } @empty {
       <p class="no-subs" role="status">Vous n'êtes abonné à aucun thème.</p>
       }

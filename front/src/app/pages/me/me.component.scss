@@ -1,197 +1,112 @@
 .profile-container {
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  min-height: calc(100vh - 80px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 20px;
-  position: relative;
-  min-height: 100vh;
-  background-color: var(--bg-color);
-  .back-button {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    text-decoration: none;
-    
-    img {
-      width: 24px;
-      transition: transform 0.2s;
-      &:hover { transform: translateX(-5px); }
-    }
-  }
-
-  h2 {
-    margin-bottom: 30px;
-    font-size: 2rem;
-    color: var(--text-dark);
-  }
-
-  .profile-card {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    width: 100%;
-    max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-
-    .info-group {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 10px;
-
-      &:last-child { border-bottom: none; }
-
-      label {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--primary-color); 
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      .info-value {
-        font-size: 1.1rem;
-        color: #444;
-        margin: 0;
-      }
-    }
-  }
-
-  .loading {
-    margin-top: 50px;
-    color: #666;
-    font-style: italic;
-  }
-  .subscriptions-section {
-  width: 100%;
-  max-width: 500px;
-  margin-top: 30px;
-  border-top: 1px solid #eee;
-  padding-top: 20px;
-
-  h3 {
-    font-size: 1.2rem;
-    color: var(--text-dark);
-    margin-bottom: 20px;
-    text-align: center;
-  }
-
-  .subscriptions-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .subscription-item {
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #f0f0f0;
-
-    .sub-info {
-      display: flex;
-      flex-direction: column;
-      
-      .sub-title {
-        font-weight: 600;
-        color: #444;
-      }
-      .sub-desc {
-        font-size: 0.85rem;
-        color: #888;
-      }
-    }
-
-    .unsubscribe-btn {
-      background-color: transparent;
-      border: 1px solid var(--danger-color);
-      color: var(--danger-color);
-      padding: 6px 12px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all 0.2s;
-
-      &:hover {
-        background-color: var(--danger-color);
-        color: white;
-      }
-    }
-  }
-  
-  .no-subs {
-      text-align: center;
-      color: #777;
-      font-style: italic;
-  }
-}
 }
 
 .header-actions {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  h1 {
+    font-size: 2rem;
+    color: var(--text-dark);
+    margin: 0;
+  }
+}
+
+.profile-card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   width: 100%;
   max-width: 500px;
-  margin-bottom: 20px;
-  
-  h2 { margin: 0; }
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 50px;
 
-  .btn-logout {
-    background-color: transparent;
-    border: 1px solid var(--danger-color);
-    color: var(--danger-color);
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.2s;
+  .info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 
-    &:hover {
-      background-color: var(--danger-color);
-      color: white;
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #777;
+      text-transform: uppercase;
+    }
+
+    input {
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      &:focus {
+        outline: 2px solid var(--primary-color);
+        border-color: transparent;
+      }
     }
   }
-  
+
+  .btn-save {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
 }
-.msg-success {
-  color: #2e7d32;
-  background-color: #e8f5e9;
-  padding: 10px;
-  border-radius: 4px;
-  margin-top: 15px;
+
+.subscriptions-section {
+  width: 100%;
+  max-width: 1200px;
+  border-top: 1px solid #ddd;
+  padding-top: 40px;
+
+  h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.5rem;
+  }
+}
+
+.subscriptions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.no-subs {
   text-align: center;
-  font-weight: 500;
+  color: #777;
+  font-style: italic;
+  grid-column: 1 / -1;
+}
+
+.msg-success {
+  color: green;
+  text-align: center;
+  margin-top: 10px;
 }
 
 .msg-error {
-  color: #c62828; 
-  background-color: #ffebee;
-  padding: 10px;
-  border-radius: 4px;
-  margin-top: 15px;
+  color: red;
   text-align: center;
-  font-weight: 500;
-}
-
-
-.form-input {  
-  &.error {
-    border-color: #c62828;
-    background-color: #fff8f8;
-  }
-}
-@media (max-width: 576px) {
-  .profile-container {
-    padding-top: 80px;
-    .profile-card { padding: 20px; }
-  }
+  margin-top: 10px;
 }
