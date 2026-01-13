@@ -1,44 +1,48 @@
+@use 'mixins' as *;
+
 .home-container {
-  display: flex;
-  flex-direction: column;
+  @include flex-column(50px);
   align-items: center;
   justify-content: center;
   height: 100vh;
-  gap: 50px;
+  padding: 20px;
 
   .logo {
     max-width: 300px;
     height: auto;
+    width: 100%;
   }
 
   .actions {
-    display: flex;
-    gap: 20px;
-    width: 100%;
-    justify-content: center;
+    display: flex;    
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);    
+    width: 100%;    
     
-    @media (max-width: 768px) {
-      flex-direction: column;
-      align-items: center;
+    @include tablet-up {
+      flex-direction: row;
+      justify-content: center;
     }
 
-    button {
+    .btn {
       padding: 10px 30px;
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       min-width: 150px;
-    }
-
-    .btn-primary {
-      background-color: var(--primary-color);
-      color: white;
+      font-weight: 600;
       border: none;
-    }
+      
+      &-primary {
+        background-color: var(--primary-color);
+        color: white;
+      }
 
-    .btn-secondary {
-      background-color: white;
-      border: 1px solid var(--primary-color);
-      color: var(--primary-color);
+      &-secondary {
+        background-color: white;
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+      }
     }
   }
 }
