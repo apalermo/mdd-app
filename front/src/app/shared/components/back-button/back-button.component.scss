@@ -1,24 +1,26 @@
+@use 'mixins' as *;
+
 :host {
-  display: block; // Le composant devient un bloc conteneur propre
+  display: block;
 }
 
 .back-link {
   font-size: 2rem;
+  line-height: 1;
   text-decoration: none;
-  color: var(--text-dark);
-  display: inline-block; // Permet les transformations (scale, translate)
-  transition: transform 0.2s ease;
-  line-height: 1; // Évite les décalages verticaux fantômes
+  color: var(--text-main);
+  display: inline-block;
+  transition: transform 0.2s ease, color 0.2s ease;
 
   &:hover, &:focus {
     transform: translateX(-5px);
-    outline: none;
     color: var(--primary-color);
+    outline: none;
   }
 
   &:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 4px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
   }
 }

@@ -1,27 +1,26 @@
-/* You can add global styles to this file, and also import other style files */
-:root {
-  --primary-color: #7963FF;
-  --danger-color: #dc3545;
-  --bg-color: #f8f9fa;
-  --text-dark: #333;
-}
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-.auth-links {
-  margin-top: 20px;
-  font-size: 0.9rem;
-  
-  a {
-    color: var(--primary-color);
-    text-decoration: none;
-    font-weight: 600;
-    
-    &:hover {
-      text-decoration: underline;
-    }
+@use 'base';
+
+// Skip Link (Accessibility)
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  background: var(--primary-color);
+  color: white;
+  padding: 10px 20px;
+  z-index: 10000;
+  transition: top 0.2s;
+  text-decoration: none;
+  font-weight: bold;
+  border-bottom-right-radius: 8px;
+
+  &:focus {
+    top: 0;
+    outline: 2px solid white;
   }
 }
 
+// Global Notification Toast
 .global-toast {
   position: fixed;
   top: 20px;
@@ -41,13 +40,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     font-size: 0.9rem;
     font-weight: 500;
   }
-
+  
   .close-btn {
-    background: none;
+    background: transparent;
     border: none;
     color: #ccc;
-    font-size: 1.4rem;
     cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0 5px;
     line-height: 1;
     &:hover { color: white; }
   }
@@ -56,22 +56,4 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 @keyframes slideIn {
   from { transform: translateX(100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
-}
-
-.skip-link {
-  position: absolute;
-  top: -100px;
-  left: 0;
-  background: var(--primary-color);
-  color: white;
-  padding: 10px 20px;
-  z-index: 10000;
-  transition: top 0.2s;
-  text-decoration: none;
-  font-weight: bold;
-  border-bottom-right-radius: 8px;
-
-  &:focus {
-    top: 0;
-  }
 }

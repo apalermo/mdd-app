@@ -1,82 +1,60 @@
+@use 'mixins' as *;
+
+// --- Profile Page Layout ---
 .profile-container {
-  padding: 40px 20px;
-  background-color: #f9f9f9;
-  min-height: calc(100vh - 80px);
-  display: flex;
-  flex-direction: column;
+  @include flex-column(40px);
   align-items: center;
+  padding: 40px var(--spacing-md);
+  min-height: calc(100vh - 80px);
 }
 
+// Header Section - Title Alignment
 .header-actions {
   width: 100%;
   max-width: 800px;
-  margin-bottom: 30px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center; 
   align-items: center;
 
   h1 {
     font-size: 2rem;
-    color: var(--text-dark);
+    color: var(--text-main);
     margin: 0;
   }
 }
 
+// User Profile Card - Core Info
 .profile-card {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  @include card-base;
   width: 100%;
   max-width: 500px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  margin-bottom: 50px;
+  @include flex-column(24px);
 
   .info-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    @include flex-column(8px);
 
     label {
       font-size: 0.85rem;
       font-weight: 600;
-      color: #777;
+      color: var(--text-muted);
       text-transform: uppercase;
     }
 
     input {
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 1rem;
-      &:focus {
-        outline: 2px solid var(--primary-color);
-        border-color: transparent;
-      }
+      @include input-base;
     }
   }
 
   .btn-save {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+    @include button-primary;
+    width: 100%;
   }
 }
 
+// --- Subscriptions Management ---
 .subscriptions-section {
-  width: 100%;
-  max-width: 1200px;
-  border-top: 1px solid #ddd;
+  @include container-max(1200px);
+  border-top: 1px solid var(--border-color);
   padding-top: 40px;
 
   h2 {
@@ -86,27 +64,20 @@
   }
 }
 
+// Responsive Grid - Handles sparse lists and centering
 .subscriptions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  // auto-fit + minmax handles card sizing while justify-content: center balances the layout
+  grid-template-columns: repeat(auto-fit, minmax(300px, 400px));
+  justify-content: center; 
   gap: 30px;
+  width: 100%;
 }
 
+// Status & Empty states
 .no-subs {
   text-align: center;
-  color: #777;
+  color: var(--text-muted);
   font-style: italic;
   grid-column: 1 / -1;
-}
-
-.msg-success {
-  color: green;
-  text-align: center;
-  margin-top: 10px;
-}
-
-.msg-error {
-  color: red;
-  text-align: center;
-  margin-top: 10px;
 }

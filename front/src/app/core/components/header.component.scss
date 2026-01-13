@@ -1,153 +1,194 @@
-$mobile-breakpoint: 768px;
-$primary-color: var(--primary-color, #7963FF);
-$danger-color: var(--danger-color, #dc3545);
-$text-color: var(--text-dark, #333);
+@use 'mixins' as *;
 
 .main-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 var(--spacing-md);
   background-color: white;
- 
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   position: relative;
   z-index: 100;
   height: 60px;
 
-  .logo-container {
-    .logo {
-      height: 40px;
-      width: auto;
-      display: block;
+  .logo-container .logo {
+    height: 40px;
+    width: auto;
+    display: block;
+  }
+
+  // Mobile navigation controls
+  .burger-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 201;
+
+    .bar {
+      width: 100%;
+      height: 3px;
+      background-color: var(--text-main);
+      border-radius: 10px;
+      transition: all 0.3s ease-in-out;
     }
   }
- 
+
+  // Off-canvas menu
   .navigation {
-    ul {
+    position: fixed;
+    top: 0;
+    right: -280px;
+    width: 250px;
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    padding: 80px 20px 40px;
+    transition: right 0.3s ease-in-out;
+    z-index: 200;
+
+    &.active {
+      right: 0;
+    }
+
+    .nav-list {
       display: flex;
+      flex-direction: column;
       list-style: none;
-      gap: 30px;
+      gap: 0;
       margin: 0;
       padding: 0;
-      align-items: center;
+      height: 100%;
+
+      .nav-item {
+        width: 100%;
+        border-bottom: 1px solid var(--bg-app);
+        
+        &.profile-item {
+          margin-top: auto; 
+          border-bottom: none;
+          text-align: right;
+          
+          a {
+            justify-content: flex-end;
+            flex-direction: row-reverse; 
+            gap: 12px;
+          }
+        }
+
+        &.logout-item { border-bottom: none; }
+      }
 
       a {
+        display: flex;
+        align-items: center;
+        padding: 15px 0;
         text-decoration: none;
-        color: $text-color;
+        color: var(--text-main);
         font-weight: 500;
-        cursor: pointer;
+        font-size: 1.1rem;
         transition: color 0.2s;
 
         &:hover, &.active-link {
-          color: $primary-color;
+          color: var(--primary-color);
         }
-
-        .user-icon {
-            font-size: 1.2rem;
+        
+        .user-icon-wrapper {
+          font-size: 1.4rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          background-color: var(--bg-bubble);
+          border-radius: 50%;
         }
       }
 
-      .logout-link {
-        color: $danger-color; 
-        cursor: pointer;
+      .logout-link-btn {
+        display: block;
+        width: 100%;
+        background: none;
+        border: none;
+        padding: 15px 0;
+        text-align: left;
+        font: inherit;
+        font-size: 1.1rem;
         font-weight: 500;
-        transition: opacity 0.2s;
+        color: var(--danger-color);
+        cursor: pointer;
         
-        &:hover { opacity: 0.8; }
+        &:hover { text-decoration: underline; opacity: 0.8; }
       }
     }
   }
 
-  .burger-btn { display: none; }
-  .overlay { display: none; }
-}
+  // Backdrop overlay - Rendering handled via @if directive
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 150;
+    animation: fadeIn 0.3s ease-out forwards;
+  }
 
-.logout-link-btn {
-  background: none;
-  border: none;
-  padding: 0;
-  font: inherit;
-  color: var(--danger-color);
-  cursor: pointer;
-  font-weight: 500;
-  text-align: left;
-  width: 100%;
-  
-  &:hover { opacity: 0.8; }
-}
-
-
-@media (max-width: $mobile-breakpoint) {
-  .main-header {
-    
-    .burger-btn {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      width: 30px;
-      height: 21px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      z-index: 101;
-
-      .bar {
-        width: 100%;
-        height: 3px;
-        background-color: $text-color;
-        border-radius: 10px;
-      }
+  @include tablet-up {
+    .burger-btn, .overlay {
+      display: none !important;
     }
 
     .navigation {
-      position: fixed;
-      top: 0;
-      right: -280px;
-      width: 250px;
-      height: 100vh;
-      background: white;
-      box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      padding: 80px 20px 20px; 
-      transition: right 0.3s ease-in-out;
-      z-index: 200;
+      position: static;
+      width: auto;
+      height: auto;
+      background: transparent;
+      box-shadow: none;
+      padding: 0;
 
-      &.active {
-        right: 0;
-      }
+      .nav-list {
+        flex-direction: row;
+        align-items: center;
+        gap: 30px;
 
-      ul {
-        flex-direction: column;
-        width: 100%;
-        gap: 0;
+        .nav-item {
+          width: auto;
+          border-bottom: none;
 
-        li {
-          width: 100%;
-          border-bottom: 1px solid #f0f0f0;
+          &.profile-item {
+            margin-top: 0;
+            
+            a {
+              flex-direction: row; 
+              gap: 8px;
+            }
+          }
         }
 
-        a, .logout-link {
-          display: block;
-          padding: 15px 0;
-          font-size: 1.1rem;
-          width: 100%;
+        a {
+          padding: 0;
+          font-size: 1rem;
+          
+          .user-icon-wrapper {
+            width: auto;
+            height: auto;
+            background: none;
+            font-size: 1.2rem;
+          }
+        }
+
+        .logout-link-btn {
+          padding: 0;
+          font-size: 1rem;
+          width: auto;
         }
       }
-    }
-
-    .overlay {
-      display: block;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 150;
-      animation: fadeIn 0.3s forwards;
     }
   }
 }

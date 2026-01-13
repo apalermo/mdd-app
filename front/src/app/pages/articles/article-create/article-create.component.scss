@@ -1,20 +1,18 @@
+@use 'mixins' as *;
+
 .create-container {
-  max-width: 700px;
-  margin: 40px auto;
-  padding: 0 20px;
+  @include container-max(700px);
+  margin-top: 40px;
+  margin-bottom: 40px;
 
   .page-header {
-    display: flex;
-    flex-direction: column;
+    @include flex-column(15px);
     align-items: flex-start;
-    gap: 15px;
     margin-bottom: 30px;
     position: relative;
 
     h1 {
-      margin: 0;
       font-size: 1.8rem;
-      color: var(--text-dark);
       width: 100%;
       text-align: center;
     }
@@ -34,36 +32,15 @@
   }
 
   .article-form {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
+    @include flex-column(24px);
 
     .form-group {
-      display: flex;
-      flex-direction: column;
+      @include flex-column(var(--spacing-sm)); // Gap pour label/input
 
       .custom-select,
       .custom-input,
       .custom-textarea {
-        width: 100%;
-        padding: 14px 16px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        font-family: inherit;
-        font-size: 0.95rem;
-        background-color: #fff;
-        color: var(--text-dark);
-        transition: border-color 0.2s, box-shadow 0.2s;
-
-        &::placeholder {
-          color: #999;
-        }
-
-        &:focus {
-          outline: none;
-          border-color: var(--primary-color);
-          box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
-        }
+        @include input-base;
       }
 
       .custom-textarea {
@@ -78,43 +55,17 @@
       margin-top: 10px;
 
       .submit-btn {
-        background-color: var(--primary-color);
-        color: white;
-        border: none;
-        padding: 12px 35px;
-        border-radius: 6px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
+        @include button-primary;
         gap: 12px;
-        transition: background-color 0.2s, opacity 0.2s;
-
-        &:hover:not(:disabled) {
-          filter: brightness(1.1);
-        }
-
-        &:disabled {
-          background-color: #cbd5e0;
-          cursor: not-allowed;
-          opacity: 0.7;
-        }
-
-        .icon-send {
-          font-size: 1.1rem;
-        }
+        .icon-send { font-size: 1.1rem; }
       }
     }
   }
 }
 
-@media (max-width: 600px) {
+@include mobile {
   .create-container {
     margin: 20px auto;
-
-    .page-header h1 {
-      font-size: 1.25rem;
-    }
+    .page-header h1 { font-size: 1.25rem; }
   }
 }
