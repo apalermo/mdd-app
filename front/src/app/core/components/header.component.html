@@ -33,9 +33,9 @@
     [class.active]="isMobileMenuOpen()"
     aria-label="Navigation principale"
   >
-    <ul>
+    <ul class="nav-list">
       @for (link of navLinks; track link.label) {
-      <li>
+      <li class="nav-item">
         <a
           [routerLink]="link.url"
           routerLinkActive="active-link"
@@ -45,17 +45,20 @@
         </a>
       </li>
       }
-      <li>
+
+      <li class="nav-item profile-item">
         <a
           routerLink="/me"
           routerLinkActive="active-link"
           (click)="closeMenu()"
           aria-label="Accéder à mon profil"
         >
-          <span class="user-icon" aria-hidden="true">👤</span> Profil
+          <span class="profile-text">Profil</span>
+          <span class="user-icon-wrapper" aria-hidden="true">👤</span>
         </a>
       </li>
-      <li>
+
+      <li class="nav-item logout-item">
         <button
           type="button"
           class="logout-link-btn"
@@ -69,6 +72,6 @@
   </nav>
 
   @if (isMobileMenuOpen()) {
-  <div class="overlay" (click)="toggleMobileMenu()" aria-hidden="true"></div>
+  <div class="overlay" (click)="closeMenu()" aria-hidden="true"></div>
   } }
 </header>
