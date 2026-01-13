@@ -31,7 +31,7 @@ public class AuthController {
      * Automatically generates a JWT token upon successful creation.
      *
      * @param request user registration details.
-     * @return an {@link AuthResponse} containing the JWT token.
+     * @return an AuthResponse containing the JWT token.
      */
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
@@ -42,7 +42,7 @@ public class AuthController {
      * Authenticates a developer using an email/name and password.
      *
      * @param request login credentials.
-     * @return an {@link AuthResponse} containing the JWT token.
+     * @return an AuthResponse containing the JWT token.
      */
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {

@@ -29,7 +29,7 @@ public class ThemeController {
     /**
      * Lists all available technical themes on the platform.
      *
-     * @return a list of themes with titles and descriptions.
+     * @return a list of ThemeResponse objects.
      */
     @GetMapping
     public ResponseEntity<List<ThemeResponse>> getThemes() {

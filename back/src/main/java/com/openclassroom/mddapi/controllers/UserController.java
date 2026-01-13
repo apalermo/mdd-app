@@ -31,7 +31,7 @@ public class UserController {
      * Uses the security principal to identify the user.
      *
      * @param principal the authenticated user context.
-     * @return the {@link UserResponse} containing profile and subscriptions.
+     * @return the UserResponse containing profile and subscriptions.
      */
     @GetMapping("/me")
     public ResponseEntity<UserResponse> me(Principal principal) {
@@ -45,7 +45,7 @@ public class UserController {
      *
      * @param userUpdateRequest the new profile data.
      * @param principal         the authenticated user context.
-     * @return the updated {@link UserResponse}.
+     * @return the updated UserResponse.
      */
     @PutMapping("/me")
     public ResponseEntity<UserResponse> updateMe(@Valid @RequestBody UserUpdateRequest userUpdateRequest, Principal principal) {

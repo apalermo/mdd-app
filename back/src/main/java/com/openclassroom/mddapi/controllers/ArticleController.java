@@ -36,7 +36,7 @@ public class ArticleController {
      * Note: Current implementation returns the raw list; sorting and filtering
      * are expected to be handled by the client application.
      *
-     * @return a list of {@link ArticleResponse} objects.
+     * @return a list of ArticleResponse objects.
      */
     @GetMapping
     public ResponseEntity<List<ArticleResponse>> findAll() {
@@ -48,7 +48,7 @@ public class ArticleController {
      * Retrieves a specific article by its unique identifier.
      *
      * @param id the ID of the article to retrieve.
-     * @return the {@link ArticleResponse} matching the ID.
+     * @return the ArticleResponse matching the ID.
      */
     @GetMapping("/{id}")
     public ResponseEntity<ArticleResponse> getById(@PathVariable Long id) {
@@ -62,7 +62,7 @@ public class ArticleController {
      *
      * @param request   the article creation data.
      * @param principal the authenticated user information.
-     * @return the newly created {@link ArticleResponse}.
+     * @return the newly created ArticleResponse.
      */
     @PostMapping
     public ResponseEntity<ArticleResponse> create(
@@ -80,7 +80,7 @@ public class ArticleController {
      * @param id        the ID of the article to comment on.
      * @param request   the comment data.
      * @param principal the authenticated user information.
-     * @return the created {@link CommentResponse}.
+     * @return the created CommentResponse.
      */
     @PostMapping("/{id}/comments")
     public ResponseEntity<CommentResponse> addComment(
