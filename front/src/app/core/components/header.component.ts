@@ -37,18 +37,34 @@ export class HeaderComponent {
 
   public isMobileMenuOpen = signal(false);
 
+  /**
+   * Enhanced A11Y: Implements Focus Trap and Escape key support for mobile navigation
+   */
   @HostListener('window:keydown', ['$event'])
   public handleKeyDown(event: KeyboardEvent): void {
-    if (!this.isMobileMenuOpen() || event.key !== 'Tab') return;
+    if (!this.isMobileMenuOpen()) return;
 
-    const element = this.navContainer()?.nativeElement;
-    if (!element) return;
+    if (event.key === 'Escape') {
+      this.closeMenu();
+      return;
+    }
 
-    const focusableElements = element.querySelectorAll<HTMLElement>(
-      'a, button, [tabindex]:not([tabindex="-1"])'
+    if (event.key !== 'Tab') return;
+
+    const navElement = this.navContainer()?.nativeElement;
+    const burgerElement = this.burgerButton()?.nativeElement;
+    if (!navElement || !burgerElement) return;
+
+    const focusableInNav = Array.from(
+      navElement.querySelectorAll<HTMLElement>(
+        'a, button, [tabindex]:not([tabindex="-1"])'
+      )
     );
-    const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
+
+    // Include burger toggle in the cycle for full keyboard control
+    const allFocusable = [burgerElement, ...focusableInNav];
+    const firstElement = allFocusable[0];
+    const lastElement = allFocusable[allFocusable.length - 1];
 
     if (event.shiftKey) {
       if (document.activeElement === firstElement) {
