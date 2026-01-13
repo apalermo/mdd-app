@@ -14,6 +14,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service managing authentication processes for MDD users.
+ * Handles secure registration and credential validation via JWT.
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -23,6 +27,13 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    /**
+     * Registers a new user and returns an authentication token.
+     *
+     * @param request registration details.
+     * @return {@link AuthResponse} with JWT.
+     * @throws ConflictException if the email or name is already taken.
+     */
     public AuthResponse register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -45,6 +56,13 @@ public class AuthService {
         return AuthResponse.builder().token(jwtToken).build();
     }
 
+    /**
+     * Authenticates a user and returns a session token.
+     *
+     * @param request login credentials.
+     * @return {@link AuthResponse} with JWT.
+     * @throws BadCredentialsException if authentication fails.
+     */
     public AuthResponse authenticate(LoginRequest request) {
         try {
             authenticationManager.authenticate(
