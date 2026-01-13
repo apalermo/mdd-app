@@ -1,6 +1,7 @@
+@use 'mixins' as *;
+
 .themes-container {
   padding: 40px 20px;
-  background-color: #f9f9f9;
   min-height: calc(100vh - 80px);
 }
 
@@ -16,7 +17,7 @@
 [role="status"] {
   grid-column: 1 / -1;
   text-align: center;
-  color: #666;
+  color: var(--text-muted);
   margin-top: 50px;
   font-style: italic;
 }
