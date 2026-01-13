@@ -1,5 +1,7 @@
+@use 'mixins' as *;
+
 .auth-content {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-    }
+  @include container-max(600px);
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
