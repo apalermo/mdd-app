@@ -8,6 +8,7 @@ import com.openclassroom.mddapi.entities.Article;
 import com.openclassroom.mddapi.entities.Comment;
 import com.openclassroom.mddapi.mappers.ArticleMapper;
 import com.openclassroom.mddapi.services.ArticleService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/articles")
 @RequiredArgsConstructor
+@Tag(name = "Articles", description = "Endpoints for technical articles and community collaboration")
 public class ArticleController {
 
     private final ArticleService articleService;
