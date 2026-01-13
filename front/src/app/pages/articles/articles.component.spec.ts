@@ -44,7 +44,7 @@ describe('ArticlesComponent', () => {
     const cards = fixture.debugElement.queryAll(By.css('.article-card'));
     expect(cards.length).toBe(1);
 
-    const title = cards[0].query(By.css('h3')).nativeElement.textContent;
+    const title = cards[0].query(By.css('h2')).nativeElement.textContent;
     expect(title).toContain('Comprendre les Signals en Angular');
   });
 
