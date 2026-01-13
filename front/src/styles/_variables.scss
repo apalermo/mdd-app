@@ -1,0 +1,42 @@
+// Design System Tokens
+
+// Breakpoints
+$bp-mobile: 576px;
+$bp-tablet: 768px;
+$bp-desktop: 992px;
+
+// CSS Custom Properties
+:root {
+  // Palette - Brand
+  --primary-color: #7963FF;
+  --primary-hover: #6550e6;
+  --danger-color: #dc3545;
+  
+  // Palette - Neutral
+  --text-main: #333333;
+  --text-muted: #666666;
+  --text-light: #999999;
+  
+  // Palette - Backgrounds
+  --bg-app: #f9f9f9;
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --bg-bubble: #f3f3f3;
+
+  // Borders & Radius
+  --border-color: #e0e0e0;
+  --border-focus: rgba(121, 99, 255, 0.2);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-pill: 50px;
+  
+  // Spacing
+  --spacing-sm: 10px;
+  --spacing-md: 20px;
+  --spacing-lg: 30px;
+  --spacing-xl: 40px;
+
+  // Effects
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+}

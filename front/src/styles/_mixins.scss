@@ -1,0 +1,108 @@
+@use 'variables' as *;
+
+// --- Breakpoints ---
+
+// Target devices <= Mobile
+@mixin mobile {
+  @media (max-width: #{$bp-mobile}) { @content; }
+}
+
+// Target devices >= Tablet
+@mixin tablet-up {
+  @media (min-width: #{$bp-tablet}) { @content; }
+}
+
+// Target devices >= Desktop
+@mixin desktop-up {
+  @media (min-width: #{$bp-desktop}) { @content; }
+}
+
+// --- Layout Utilities ---
+
+@mixin flex-column($gap: var(--spacing-sm)) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}
+
+@mixin container-max($width: 1200px) {
+  max-width: $width;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+  width: 100%;
+}
+
+// --- Component Primitives ---
+
+@mixin card-base {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+@mixin input-base {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 1rem;
+  background-color: var(--bg-input);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+
+  &::placeholder { color: var(--text-light); }
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--border-focus);
+  }
+}
+
+@mixin button-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 12px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.2s, background-color 0.2s;
+  text-decoration: none;
+  font-size: 1rem;
+  line-height: 1.5;
+
+  &:hover:not(:disabled) { filter: brightness(1.1); }
+  
+  &:disabled {
+    background-color: #cbd5e0;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
+@mixin button-secondary {
+  @include button-primary;
+  background-color: white;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+
+  &:hover:not(:disabled) {
+    background-color: #f5f5f5;
+    filter: none;
+  }
+}
+
+@mixin line-clamp($lines: 3) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

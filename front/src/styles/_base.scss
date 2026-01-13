@@ -1,0 +1,52 @@
+@use 'variables' as *;
+
+// Reset
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, p { margin-top: 0; }
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+// A11y Utilities
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Shared Authentication Links
+.auth-links {
+  margin-top: var(--spacing-md);
+  font-size: 0.9rem;
+  text-align: center;
+  
+  a {
+    color: var(--primary-color);
+    font-weight: 600;
+    &:hover { text-decoration: underline; }
+  }
+}
