@@ -10,9 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * REST controller for managing technical themes and user subscriptions.
@@ -42,12 +40,12 @@ public class ThemeController {
      *
      * @param id        the ID of the theme to follow.
      * @param principal the authenticated user context.
-     * @return a confirmation message.
+     * @return a 204 No Content response upon success.
      */
     @PostMapping("/{id}/subscribe")
-    public ResponseEntity<Map<String, String>> subscribe(@PathVariable Long id, Principal principal) {
+    public ResponseEntity<Void> subscribe(@PathVariable Long id, Principal principal) {
         themeService.subscribe(id, principal.getName());
-        return ResponseEntity.ok(Collections.singletonMap("message", "Subscribed"));
+        return ResponseEntity.noContent().build();
     }
 
     /**
