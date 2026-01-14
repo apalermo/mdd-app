@@ -20,7 +20,8 @@ spring:
         format_sql: true
   jackson:
     property-naming-strategy: SNAKE_CASE
-
+springdoc:
+  show-javadoc: true
 logging:
   level:
     root: INFO
