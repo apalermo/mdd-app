@@ -4,6 +4,7 @@ import com.openclassroom.mddapi.dtos.auth.AuthResponse;
 import com.openclassroom.mddapi.dtos.auth.LoginRequest;
 import com.openclassroom.mddapi.dtos.auth.RegisterRequest;
 import com.openclassroom.mddapi.entities.User;
+import com.openclassroom.mddapi.exceptions.BadCredentialsException;
 import com.openclassroom.mddapi.exceptions.ConflictException;
 import com.openclassroom.mddapi.repositories.UserRepository;
 import com.openclassroom.mddapi.security.jwt.JwtService;
@@ -14,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

@@ -63,7 +63,7 @@ class ThemeControllerTest {
 
     @Test
     @DisplayName("POST /api/themes/{id}/subscribe - Success")
-    void subscribeShouldReturnOk() throws Exception {
+    void subscribeShouldReturnNoContent() throws Exception {
         // Arrange
         Long themeId = 1L;
         doNothing().when(themeService).subscribe(eq(themeId), anyString());
@@ -72,7 +72,7 @@ class ThemeControllerTest {
         mockMvc.perform(post("/api/themes/{id}/subscribe", themeId)
                         .principal(() -> "test@test.com")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test
