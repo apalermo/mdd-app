@@ -2,10 +2,10 @@ describe('Articles Management', () => {
   beforeEach(() => {
     cy.task('resetDb');
     cy.login('test@test.com', '12345678Test!');
-    cy.visit('/articles');
   });
 
   it('should list articles and toggle sorting', () => {
+    cy.visit('/articles');
     cy.get('.article-card').should('have.length', 4);
 
     cy.get('.sort-toggle-btn').should('contain', 'Date');
