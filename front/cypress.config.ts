@@ -23,8 +23,11 @@ export default defineConfig({
             await connection.query(sql);
             return null;
           } catch (err) {
-            console.error('Erreur Task resetDb:', err);
-            throw err;
+            throw new Error(
+              `[Database Task Error]: Failed to reset database. Details: ${
+                err instanceof Error ? err.message : err
+              }`
+            );
           } finally {
             await connection.end();
           }
