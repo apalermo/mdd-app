@@ -2,10 +2,10 @@ describe('User Profile', () => {
   beforeEach(() => {
     cy.task('resetDb');
     cy.login('test@test.com', '12345678Test!');
-    cy.visit('/me');
   });
 
   it('should update user information', () => {
+    cy.visit('/me');
     cy.get('input#profile-name').clear().type('Anthony Updated');
     cy.get('button.btn-save').click();
 
