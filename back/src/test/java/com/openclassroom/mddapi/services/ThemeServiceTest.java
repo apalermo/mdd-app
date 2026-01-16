@@ -98,7 +98,7 @@ class ThemeServiceTest {
 
         assertThatThrownBy(() -> themeService.subscribe(1L, "unknown@test.com"))
                 .isInstanceOf(NotFoundException.class)
-                .hasMessageContaining("User not found");
+                .hasMessageContaining("Utilisateur introuvable");
     }
 
     @Test

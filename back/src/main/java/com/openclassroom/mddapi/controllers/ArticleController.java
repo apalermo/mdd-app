@@ -11,6 +11,7 @@ import com.openclassroom.mddapi.services.ArticleService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +20,10 @@ import java.security.Principal;
 import java.util.List;
 
 /**
- * REST controller for managing articles and their associated comments.
+ * REST controller for managing technical articles and their associated community comments.
  * Provides endpoints for retrieving, creating, and interacting with developer-focused content.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/articles")
 @RequiredArgsConstructor
@@ -33,14 +35,14 @@ public class ArticleController {
 
     /**
      * Retrieves all articles available in the system.
-     * Note: Current implementation returns the raw list; sorting and filtering
-     * are expected to be handled by the client application.
      *
      * @return a list of ArticleResponse objects.
      */
     @GetMapping
     public ResponseEntity<List<ArticleResponse>> findAll() {
+        log.info("REST request to get all articles");
         List<Article> articles = articleService.findAll();
+        log.debug("Found {} articles", articles.size());
         return ResponseEntity.ok(articleMapper.toDtoList(articles));
     }
 
@@ -52,13 +54,13 @@ public class ArticleController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<ArticleResponse> getById(@PathVariable Long id) {
+        log.info("REST request to get article : {}", id);
         Article article = articleService.findById(id);
         return ResponseEntity.ok(articleMapper.toResponse(article));
     }
 
     /**
      * Creates a new article.
-     * The author is automatically set based on the authenticated user's credentials.
      *
      * @param request   the article creation data.
      * @param principal the authenticated user information.
@@ -69,6 +71,9 @@ public class ArticleController {
             @Valid @RequestBody ArticleRequest request,
             Principal principal
     ) {
+        log.info("REST request to create article '{}' by user '{}'",
+                request.getTitle(), principal.getName());
+
         Article article = articleService.create(request, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(articleMapper.toResponse(article));
@@ -88,6 +93,9 @@ public class ArticleController {
             @Valid @RequestBody CommentRequest request,
             Principal principal
     ) {
+        log.info("REST request to add comment on article {} by user '{}'",
+                id, principal.getName());
+
         Comment comment = articleService.addComment(id, request, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(articleMapper.toCommentResponse(comment));

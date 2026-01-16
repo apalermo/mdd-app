@@ -25,6 +25,7 @@ springdoc:
 logging:
   level:
     root: INFO
-    org.hibernate.SQL: DEBUG
-    org.springframework.web: INFO
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: INFO
     com.openclassroom.mddapi: DEBUG
+    org.springframework.security: INFO

@@ -6,12 +6,14 @@ import com.openclassroom.mddapi.exceptions.ConflictException;
 import com.openclassroom.mddapi.exceptions.NotFoundException;
 import com.openclassroom.mddapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
  * Service handling user profile management and data retrieval.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -26,8 +28,12 @@ public class UserService {
      * @throws NotFoundException if user is not found.
      */
     public User getByEmail(String email) {
+        log.info("Fetching profile for user: {}", email);
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("Utilisateur non trouvé avec l'adresse email : " + email));
+                .orElseThrow(() -> {
+                    log.warn("User profile retrieval failed: {} not found", email);
+                    return new NotFoundException("Utilisateur non trouvé avec l'adresse email : " + email);
+                });
     }
 
     /**
@@ -39,14 +45,21 @@ public class UserService {
      * @throws ConflictException if the new email or name is already in use by another user.
      */
     public User updateUser(Long userId, UserUpdateRequest userUpdateRequest) {
+        log.info("Attempting to update profile for user ID: {}", userId);
+
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> {
+                    log.error("Update failed: User ID {} does not exist", userId);
+                    return new NotFoundException("Utilisateur introuvable");
+                });
 
         if (userRepository.existsByEmailAndIdNot(userUpdateRequest.getEmail(), userId)) {
+            log.warn("Update conflict: email {} is already in use", userUpdateRequest.getEmail());
             throw new ConflictException("Cet email est déjà utilisé par un autre utilisateur.");
         }
 
         if (userRepository.existsByNameAndIdNot(userUpdateRequest.getName(), userId)) {
+            log.warn("Update conflict: username '{}' is already taken", userUpdateRequest.getName());
             throw new ConflictException("Ce nom d'utilisateur est déjà pris.");
         }
 
@@ -54,9 +67,12 @@ public class UserService {
         user.setName(userUpdateRequest.getName());
 
         if (userUpdateRequest.getPassword() != null && !userUpdateRequest.getPassword().isEmpty()) {
+            log.debug("Password update requested for user ID: {}", userId);
             user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
         }
 
-        return userRepository.save(user);
+        User updatedUser = userRepository.save(user);
+        log.info("Profile successfully updated for user ID: {}", userId);
+        return updatedUser;
     }
 }

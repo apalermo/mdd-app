@@ -12,6 +12,7 @@ import com.openclassroom.mddapi.repositories.CommentRepository;
 import com.openclassroom.mddapi.repositories.ThemeRepository;
 import com.openclassroom.mddapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
  * Service handling business logic for the MDD (Monde de Dév) social network.
  * Facilitates peer collaboration by managing articles and developer interactions.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ArticleService {
@@ -36,6 +38,7 @@ public class ArticleService {
      * @return a list of all technical articles.
      */
     public List<Article> findAll() {
+        log.info("Fetching all articles from database");
         return articleRepository.findAll();
     }
 
@@ -47,8 +50,12 @@ public class ArticleService {
      * @throws NotFoundException if the article does not exist.
      */
     public Article findById(Long id) {
+        log.info("Fetching article with id: {}", id);
         return articleRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Article not found with id: " + id));
+                .orElseThrow(() -> {
+                    log.warn("Article search failed: ID {} not found", id);
+                    return new NotFoundException("Article introuvable avec l'identifiant : " + id);
+                });
     }
 
     /**
@@ -60,11 +67,13 @@ public class ArticleService {
      * @return the saved article entity.
      */
     public Article create(ArticleRequest request, String email) {
+        log.info("Attempting to create article '{}' for user: {}", request.getTitle(), email);
+
         User author = userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Utilisateur introuvable"));
 
         Theme theme = themeRepository.findById(request.getThemeId())
-                .orElseThrow(() -> new NotFoundException("Theme not found"));
+                .orElseThrow(() -> new NotFoundException("Thème introuvable"));
 
         Article article = Article.builder()
                 .title(request.getTitle())
@@ -73,7 +82,9 @@ public class ArticleService {
                 .theme(theme)
                 .build();
 
-        return articleRepository.save(article);
+        Article savedArticle = articleRepository.save(article);
+        log.info("Article successfully created with ID: {}", savedArticle.getId());
+        return savedArticle;
     }
 
     /**
@@ -85,11 +96,13 @@ public class ArticleService {
      * @return the saved comment entity.
      */
     public Comment addComment(Long articleId, CommentRequest request, String email) {
+        log.info("Attempting to add comment on article {} by user: {}", articleId, email);
+
         User author = userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Utilisateur introuvable"));
 
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new NotFoundException("Article not found"));
+                .orElseThrow(() -> new NotFoundException("Article introuvable"));
 
         Comment comment = Comment.builder()
                 .content(request.getContent())
@@ -97,6 +110,8 @@ public class ArticleService {
                 .article(article)
                 .build();
 
-        return commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(comment);
+        log.info("Comment ID {} successfully added to article {}", savedComment.getId(), articleId);
+        return savedComment;
     }
 }

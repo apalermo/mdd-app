@@ -7,6 +7,7 @@ import com.openclassroom.mddapi.services.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Entry point for MDD authentication flows.
  * Handles new user registration and secure login to obtain JWT tokens.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -35,7 +37,12 @@ public class AuthController {
      */
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
+        log.info("REST request to register new user: {}", request.getEmail());
+
+        AuthResponse response = authService.register(request);
+
+        log.info("User successfully registered: {}", request.getEmail());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
@@ -46,6 +53,11 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.authenticate(request));
+        log.info("REST request to login user: {}", request.getIdentifier());
+
+        AuthResponse response = authService.authenticate(request);
+
+        log.info("User successfully authenticated: {}", request.getIdentifier());
+        return ResponseEntity.ok(response);
     }
 }

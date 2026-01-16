@@ -2,6 +2,7 @@ package com.openclassroom.mddapi.controllers;
 
 import com.openclassroom.mddapi.dtos.themes.ThemeResponse;
 import com.openclassroom.mddapi.entities.Theme;
+import com.openclassroom.mddapi.exceptions.NotFoundException;
 import com.openclassroom.mddapi.mappers.ThemeMapper;
 import com.openclassroom.mddapi.security.jwt.JwtService;
 import com.openclassroom.mddapi.services.ThemeService;
@@ -63,7 +64,7 @@ class ThemeControllerTest {
 
     @Test
     @DisplayName("POST /api/themes/{id}/subscribe - Success")
-    void subscribeShouldReturnOk() throws Exception {
+    void subscribeShouldReturnNoContent() throws Exception {
         // Arrange
         Long themeId = 1L;
         doNothing().when(themeService).subscribe(eq(themeId), anyString());
@@ -72,14 +73,14 @@ class ThemeControllerTest {
         mockMvc.perform(post("/api/themes/{id}/subscribe", themeId)
                         .principal(() -> "test@test.com")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test
     @DisplayName("POST /api/themes/{id}/subscribe - Not Found")
     void subscribeShouldReturnNotFoundWhenThemeMissing() throws Exception {
         // Arrange
-        doThrow(new com.openclassroom.mddapi.exceptions.NotFoundException("Theme not found"))
+        doThrow(new NotFoundException("Theme not found"))
                 .when(themeService).subscribe(eq(99L), anyString());
 
         // Act & Assert
