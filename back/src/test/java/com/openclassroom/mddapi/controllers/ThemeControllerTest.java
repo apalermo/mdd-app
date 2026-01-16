@@ -2,6 +2,7 @@ package com.openclassroom.mddapi.controllers;
 
 import com.openclassroom.mddapi.dtos.themes.ThemeResponse;
 import com.openclassroom.mddapi.entities.Theme;
+import com.openclassroom.mddapi.exceptions.NotFoundException;
 import com.openclassroom.mddapi.mappers.ThemeMapper;
 import com.openclassroom.mddapi.security.jwt.JwtService;
 import com.openclassroom.mddapi.services.ThemeService;
@@ -79,7 +80,7 @@ class ThemeControllerTest {
     @DisplayName("POST /api/themes/{id}/subscribe - Not Found")
     void subscribeShouldReturnNotFoundWhenThemeMissing() throws Exception {
         // Arrange
-        doThrow(new com.openclassroom.mddapi.exceptions.NotFoundException("Theme not found"))
+        doThrow(new NotFoundException("Theme not found"))
                 .when(themeService).subscribe(eq(99L), anyString());
 
         // Act & Assert

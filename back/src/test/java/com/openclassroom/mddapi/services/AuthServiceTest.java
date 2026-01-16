@@ -4,8 +4,8 @@ import com.openclassroom.mddapi.dtos.auth.AuthResponse;
 import com.openclassroom.mddapi.dtos.auth.LoginRequest;
 import com.openclassroom.mddapi.dtos.auth.RegisterRequest;
 import com.openclassroom.mddapi.entities.User;
-import com.openclassroom.mddapi.exceptions.BadCredentialsException;
 import com.openclassroom.mddapi.exceptions.ConflictException;
+import com.openclassroom.mddapi.exceptions.MddBadCredentialsException;
 import com.openclassroom.mddapi.repositories.UserRepository;
 import com.openclassroom.mddapi.security.jwt.JwtService;
 import org.junit.jupiter.api.DisplayName;
@@ -98,9 +98,9 @@ class AuthServiceTest {
     void shouldPropagateAuthenticationError() {
         LoginRequest request = new LoginRequest("test@test.com", "wrong");
         when(authenticationManager.authenticate(any()))
-                .thenThrow(new BadCredentialsException("Bad credentials"));
+                .thenThrow(new MddBadCredentialsException("Bad credentials"));
 
-        assertThrows(BadCredentialsException.class, () -> authService.authenticate(request));
+        assertThrows(MddBadCredentialsException.class, () -> authService.authenticate(request));
         verify(jwtService, never()).generateToken(any());
     }
 }

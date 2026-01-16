@@ -1,15 +1,11 @@
 package com.openclassroom.mddapi.advice;
 
-import com.openclassroom.mddapi.exceptions.BadRequestException;
-import com.openclassroom.mddapi.exceptions.ConflictException;
-import com.openclassroom.mddapi.exceptions.ForbiddenException;
-import com.openclassroom.mddapi.exceptions.NotFoundException;
+import com.openclassroom.mddapi.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -19,8 +15,6 @@ import java.util.stream.Collectors;
 
 /**
  * Global controller advice to handle exceptions across the application.
- * Centralizes error handling to provide consistent and structured responses
- * for all client applications.
  */
 @Slf4j
 @RestControllerAdvice
@@ -28,46 +22,38 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ErrorResponse> handleConflictException(ConflictException ex) {
-        log.warn("Conflict exception: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ErrorResponse(ex.getMessage()));
+        log.warn("Data conflict detected: {}", ex.getMessage());
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage(), "Un conflit de données est survenu.");
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
-        log.error("Data integrity violation: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ErrorResponse("Un conflit de données est survenu sur le serveur."));
+        log.error("Database integrity violation: {}", ex.getMessage());
+        return buildResponse(HttpStatus.CONFLICT, null, "Un conflit de données est survenu sur le serveur.");
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex) {
-        String message = ex.getMessage() != null ? ex.getMessage() : "La ressource demandée est introuvable.";
-        log.info("Resource not found: {}", message);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponse(message));
+        log.info("Resource not found: {}", ex.getMessage());
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), "La ressource demandée est introuvable.");
     }
 
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ErrorResponse> handleForbiddenException(ForbiddenException ex) {
-        String message = ex.getMessage() != null ? ex.getMessage() : "Accès refusé.";
-        log.warn("Forbidden access attempt: {}", message);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(new ErrorResponse(message));
+        log.warn("Access forbidden: {}", ex.getMessage());
+        return buildResponse(HttpStatus.FORBIDDEN, ex.getMessage(), "Accès refusé.");
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex) {
-        log.warn("Authentication failed: Bad credentials");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse("Identifiants incorrects"));
+    @ExceptionHandler(MddBadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentialsException(MddBadCredentialsException ex) {
+        log.warn("Authentication failure: {}", ex.getMessage());
+        return buildResponse(HttpStatus.UNAUTHORIZED, ex.getMessage(), "Identifiants incorrects.");
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex) {
-        log.error("An unexpected error occurred: ", ex); // Log avec stacktrace complète
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse("Une erreur technique est survenue."));
+        log.error("Unexpected internal server error: ", ex);
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, null, "Une erreur technique est survenue.");
     }
 
     @ExceptionHandler({
@@ -84,20 +70,23 @@ public class GlobalExceptionHandler {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(validationError));
         }
 
-        log.warn("Bad request: {}", ex.getMessage());
-
-        if (ex instanceof BadRequestException) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage()));
-        }
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Requête invalide."));
+        log.warn("Bad request exception: {}", ex.getMessage());
+        String message = (ex instanceof BadRequestException) ? ex.getMessage() : "Requête invalide.";
+        return buildResponse(HttpStatus.BAD_REQUEST, message, "Requête invalide.");
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        log.warn("Malformed JSON request: {}", ex.getMostSpecificCause().getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse("Le format du JSON est invalide."));
+        log.warn("Malformed JSON payload: {}", ex.getMostSpecificCause().getMessage());
+        return buildResponse(HttpStatus.BAD_REQUEST, null, "Le format du JSON est invalide.");
+    }
+
+    /**
+     * Helper method to build a consistent error response.
+     */
+    private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, String message, String defaultMessage) {
+        String finalMessage = (message != null && !message.isEmpty()) ? message : defaultMessage;
+        return ResponseEntity.status(status).body(new ErrorResponse(finalMessage));
     }
 
     public record ErrorResponse(String message) {
