@@ -63,7 +63,7 @@ describe('errorInterceptor', () => {
     req.flush(null, { status: 500, statusText: 'Server Error' });
 
     expect(notificationService.show).toHaveBeenCalledWith(
-      'Une erreur technique est survenue.'
+      'Une erreur inattendue est survenue.'
     );
   });
 });
