@@ -12,10 +12,7 @@ import { errorInterceptor } from './core/interceptors/error.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(
-      withInterceptors([authInterceptor]),
-      withInterceptors([errorInterceptor])
-    ),
+    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
