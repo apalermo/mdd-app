@@ -17,6 +17,7 @@
         type="text"
         formControlName="identifier"
         autocomplete="username"
+        data-cy="login-identifier"
         aria-required="true"
         [attr.aria-invalid]="
           loginForm.get('identifier')?.invalid &&
@@ -38,6 +39,7 @@
         type="password"
         formControlName="password"
         autocomplete="current-password"
+        data-cy="login-password"
         aria-required="true"
         [attr.aria-invalid]="
           loginForm.get('password')?.invalid &&
@@ -55,6 +57,7 @@
       type="submit"
       [disabled]="loginForm.invalid"
       class="btn-submit"
+      data-cy="login-submit"
       aria-label="Se connecter à mon compte"
     >
       Se connecter
