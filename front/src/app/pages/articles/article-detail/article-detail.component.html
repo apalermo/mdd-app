@@ -4,7 +4,7 @@
       <header class="article-header">
         <div class="title-row">
           <app-back-button destination="/articles"></app-back-button>
-          <h1>{{ item.title }}</h1>
+          <h1 data-cy="article-title">{{ item.title }}</h1>
         </div>
 
         <div class="meta-row">
@@ -36,7 +36,7 @@
 
       <div class="comments-list" role="log" aria-live="polite">
         @for (comment of item.comments; track $index) {
-          <div class="comment-item">
+          <div class="comment-item" data-cy="comment-item">
             <p class="comment-author">{{ comment.author_name }}</p>
             <div class="comment-bubble">
               {{ comment.content }}
@@ -59,6 +59,7 @@
             <textarea
               id="comment-content"
               formControlName="content"
+              data-cy="comment-textarea"
               placeholder="Écrivez ici votre commentaire"
               rows="3"
               aria-required="true"
@@ -71,7 +72,7 @@
               commentForm.get("content")?.invalid &&
               commentForm.get("content")?.touched
             ) {
-              <span class="error-msg"
+              <span class="error-msg" data-cy="comment-error"
                 >Veuillez saisir un commentaire (2 caractères minimum).</span
               >
             }
@@ -80,6 +81,7 @@
             type="submit"
             [disabled]="commentForm.invalid"
             class="send-btn"
+            data-cy="comment-submit"
             aria-label="Envoyer le commentaire"
           >
             <span class="icon-send" aria-hidden="true">➤</span>
