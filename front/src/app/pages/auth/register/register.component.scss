@@ -19,8 +19,12 @@
 
     .form-group {
       @include flex-column(5px);
-      label { font-weight: bold; font-size: 0.9rem; }
+      
+      label { @include label-base; }
+
       input { @include input-base; }
+
+      .error-msg { @include error-message; }
     }
 
     .btn-submit {

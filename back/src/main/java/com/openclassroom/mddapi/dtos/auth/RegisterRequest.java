@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,9 +37,12 @@ public class RegisterRequest {
     private String name;
 
     /**
-     * Secure password. Must be between 8 and 64 characters.
+     * Secure password. Must be at least 8 characters and include uppercase, lowercase, number and special char.
      */
     @NotBlank(message = "Le mot de passe est obligatoire")
-    @Size(min = 8, max = 64, message = "Le mot de passe doit contenir entre 8 et 64 caractères")
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+            message = "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial"
+    )
     private String password;
 }

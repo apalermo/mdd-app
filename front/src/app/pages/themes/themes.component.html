@@ -4,36 +4,39 @@
   </header>
 
   <div class="themes-grid" role="list">
-    @for (theme of (themes$ | async); track theme.id) {
-
-    <app-theme-card
-      [id]="theme.id"
-      [title]="theme.title"
-      [description]="theme.description"
-    >
-      @if (isSubscribed(theme.id)) {
-      <button
-        action-button
-        class="btn-secondary"
-        disabled
-        [attr.aria-label]="'Déjà abonné au thème ' + theme.title"
+    @for (theme of themes$ | async; track theme.id) {
+      <app-theme-card
+        [id]="theme.id"
+        [title]="theme.title"
+        [description]="theme.description"
+        data-cy="theme-card"
       >
-        Déjà abonné
-      </button>
-      } @else {
-      <button
-        action-button
-        class="btn-primary"
-        (click)="subscribe(theme.id)"
-        [attr.aria-label]="'S\'abonner au thème ' + theme.title"
-      >
-        S'abonner
-      </button>
-      }
-    </app-theme-card>
-
+        @if (isSubscribed(theme.id)) {
+          <button
+            action-button
+            class="btn-secondary"
+            disabled
+            data-cy="subscribed-btn"
+            [attr.aria-label]="'Déjà abonné au thème ' + theme.title"
+          >
+            Déjà abonné
+          </button>
+        } @else {
+          <button
+            action-button
+            class="btn-primary"
+            (click)="subscribe(theme.id)"
+            data-cy="subscribe-btn"
+            [attr.aria-label]="'S\'abonner au thème ' + theme.title"
+          >
+            S'abonner
+          </button>
+        }
+      </app-theme-card>
     } @empty {
-    <p role="status">Aucun thème disponible pour le moment.</p>
+      <p role="status" data-cy="no-themes">
+        Aucun thème disponible pour le moment.
+      </p>
     }
   </div>
 </main>

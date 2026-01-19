@@ -5,23 +5,21 @@
       class="btn-create"
       routerLink="/articles/create"
       role="button"
+      data-cy="create-article-btn"
       aria-label="Créer un nouvel article"
     >
       Créer un article
     </a>
 
     <div class="sort-controls">
-      <span class="sort-label">Trier par</span>
+      <span class="sort-label" id="label-sort">Trier par</span>
 
       <button
         type="button"
         class="sort-toggle-btn"
         (click)="toggleSortCriteria()"
-        [attr.aria-label]="
-          'Critère de tri actuel : ' +
-          (sortBy() === 'date' ? 'Date' : 'Titre') +
-          '. Cliquer pour changer.'
-        "
+        data-cy="sort-criteria-btn"
+        aria-labelledby="label-sort"
       >
         {{ sortBy() === "date" ? "Date" : "Titre" }}
       </button>
@@ -30,10 +28,9 @@
         type="button"
         class="direction-btn"
         (click)="toggleDirection()"
+        data-cy="sort-direction-btn"
         [attr.aria-label]="
-          sortDirection() === 'asc'
-            ? 'Actuellement trié par ordre croissant. Cliquer pour trier par ordre décroissant.'
-            : 'Actuellement trié par ordre décroissant. Cliquer pour trier par ordre croissant.'
+          sortDirection() === 'asc' ? 'Tri croissant' : 'Tri décroissant'
         "
       >
         <span
@@ -46,31 +43,34 @@
     </div>
   </div>
 
-  <div class="articles-grid" role="list">
+  <div class="articles-grid" role="list" aria-label="Articles">
     @for (article of articles(); track article.id) {
-    <a
-      class="article-card"
-      [routerLink]="['/articles/', article.id]"
-      [attr.aria-label]="'Lire l\'article : ' + article.title"
-      role="listitem"
-    >
-      <article class="card-content">
-        <h2>{{ article.title }}</h2>
-        <div class="meta-row">
-          <span class="date">
-            <span class="sr-only">Publié le </span>
-            {{ article.created_at | date : "dd/MM/yyyy" }}
-          </span>
-          <span class="author">
-            <span class="sr-only">Par </span>
-            {{ article.author_name }}
-          </span>
-        </div>
-        <p class="description">{{ article.content }}</p>
-      </article>
-    </a>
+      <a
+        class="article-card"
+        [routerLink]="['/articles/', article.id]"
+        [attr.aria-label]="'Lire l\'article : ' + article.title"
+        data-cy="article-card"
+        role="listitem"
+      >
+        <article class="card-content">
+          <h2 data-cy="article-title">{{ article.title }}</h2>
+          <div class="meta-row">
+            <span class="date">
+              <span class="sr-only">Publié le </span>
+              {{ article.created_at | date: "dd/MM/yyyy" }}
+            </span>
+            <span class="author">
+              <span class="sr-only">Par </span>
+              {{ article.author_name }}
+            </span>
+          </div>
+          <p class="description">{{ article.content }}</p>
+        </article>
+      </a>
     } @empty {
-    <p class="no-data" role="status">Aucun article n'a encore été publié.</p>
+      <p class="no-data" role="status" data-cy="no-articles">
+        Aucun article n'a encore été publié.
+      </p>
     }
   </div>
 </main>

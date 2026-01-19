@@ -1,17 +1,23 @@
-<a [routerLink]="[]" fragment="main-content" class="skip-link"
-  >Aller au contenu principal</a
->
+<a [routerLink]="[]" fragment="main-content" class="skip-link">
+  Aller au contenu principal
+</a>
 <router-outlet></router-outlet>
 
 @if (notificationService.message(); as msg) {
-<div class="global-toast" role="status" aria-live="polite">
-  <span class="toast-content">{{ msg }}</span>
-  <button
-    (click)="notificationService.message.set(null)"
-    class="close-btn"
-    aria-label="Fermer la notification"
+  <div
+    class="global-toast"
+    role="status"
+    aria-live="polite"
+    data-cy="toast-container"
   >
-    ×
-  </button>
-</div>
+    <span class="toast-content" data-cy="toast-content">{{ msg }}</span>
+    <button
+      (click)="notificationService.message.set(null)"
+      class="close-btn"
+      aria-label="Fermer la notification"
+      data-cy="toast-close"
+    >
+      ×
+    </button>
+  </div>
 }

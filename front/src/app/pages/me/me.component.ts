@@ -28,7 +28,14 @@ export class MeComponent {
   public form = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.minLength(8)]],
+    password: [
+      '',
+      [
+        Validators.pattern(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        ),
+      ],
+    ],
   });
 
   private refresh$ = new BehaviorSubject<void>(void 0);
@@ -42,7 +49,7 @@ export class MeComponent {
         email: user.email,
         password: '',
       });
-    })
+    }),
   );
 
   public submit(): void {
@@ -56,7 +63,7 @@ export class MeComponent {
 
       this.userService.update(request).subscribe((updatedUser) => {
         this.notificationService.show(
-          'Vos modifications ont été enregistrées !'
+          'Vos modifications ont été enregistrées !',
         );
         this.sessionService.updateUser(updatedUser);
       });

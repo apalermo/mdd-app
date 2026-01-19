@@ -46,7 +46,7 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /register - Should return 201 Created and JWT token on success")
     void shouldRegisterSuccessfully() throws Exception {
-        RegisterRequest request = new RegisterRequest("integration@test.com", "IntegrationUser", "password123");
+        RegisterRequest request = new RegisterRequest("integration@test.com", "IntegrationUser", "Test1234!");
         AuthResponse response = AuthResponse.builder().token("mock-jwt-token").build();
 
         when(authService.register(any(RegisterRequest.class))).thenReturn(response);
@@ -72,7 +72,7 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /register - Should return 409 Conflict when user already exists")
     void shouldReturnConflictForDuplicateUser() throws Exception {
-        RegisterRequest request = new RegisterRequest("dup@test.com", "DupUser", "password123");
+        RegisterRequest request = new RegisterRequest("dup@test.com", "DupUser", "Test1234!");
 
         when(authService.register(any(RegisterRequest.class)))
                 .thenThrow(new ConflictException("Cet email est déjà utilisé !"));
@@ -86,7 +86,7 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /login - Should return 200 OK and JWT token on success")
     void shouldLoginSuccessfully() throws Exception {
-        LoginRequest request = new LoginRequest("login@test.com", "password123");
+        LoginRequest request = new LoginRequest("login@test.com", "Test1234!");
         AuthResponse response = AuthResponse.builder().token("mock-jwt-token").build();
 
         when(authService.authenticate(any(LoginRequest.class))).thenReturn(response);

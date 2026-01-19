@@ -45,7 +45,7 @@ describe('AuthService', () => {
     const mockRequest: RegisterRequest = {
       name: 'Dev',
       email: 'a@a.com',
-      password: '123',
+      password: 'Test1234!',
     };
 
     service.register(mockRequest).subscribe((response) => {

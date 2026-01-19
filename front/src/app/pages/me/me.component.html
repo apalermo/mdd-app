@@ -4,86 +4,118 @@
   </header>
 
   @if (user$ | async; as user) {
-
-  <form
-    [formGroup]="form"
-    (ngSubmit)="submit()"
-    class="profile-card"
-    aria-label="Modifier mes informations personnelles"
-  >
-    <div class="info-group">
-      <label for="profile-name">Nom d'utilisateur</label>
-      <input
-        id="profile-name"
-        type="text"
-        formControlName="name"
-        aria-required="true"
-        [attr.aria-invalid]="
-          form.get('name')?.invalid && form.get('name')?.touched
-        "
-      />
-    </div>
-
-    <div class="info-group">
-      <label for="profile-email">Adresse e-mail</label>
-      <input
-        id="profile-email"
-        type="email"
-        formControlName="email"
-        aria-required="true"
-        [attr.aria-invalid]="
-          form.get('email')?.invalid && form.get('email')?.touched
-        "
-      />
-    </div>
-
-    <div class="info-group">
-      <label for="profile-password">Nouveau mot de passe (optionnel)</label>
-      <input
-        id="profile-password"
-        type="password"
-        formControlName="password"
-        placeholder="••••••••"
-      />
-    </div>
-
-    <button
-      type="submit"
-      class="btn-save"
-      [disabled]="form.invalid || form.pristine"
-      aria-label="Enregistrer les modifications du profil"
+    <form
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      class="profile-card"
+      aria-label="Modifier mes informations personnelles"
     >
-      Sauvegarder
-    </button>
-  </form>
-
-  <section class="subscriptions-section" aria-labelledby="subs-title">
-    <h2 id="subs-title">Abonnements</h2>
-    <div class="subscriptions-grid" role="list">
-      @for (sub of user.subscriptions; track sub.id) {
-      <app-theme-card
-        [id]="sub.id"
-        [title]="sub.title"
-        [description]="sub.description"
-      >
-        <button
-          action-button
-          class="btn-primary"
-          (click)="unsubscribe(sub.id)"
-          [attr.aria-label]="'Se désabonner du thème ' + sub.title"
+      <div class="info-group">
+        <label for="profile-name"
+          >Nom d'utilisateur <span class="required">*</span></label
         >
-          Se désabonner
-        </button>
-      </app-theme-card>
-      } @empty {
-      <p class="no-subs" role="status">Vous n'êtes abonné à aucun thème.</p>
-      }
-    </div>
-  </section>
+        <input
+          id="profile-name"
+          type="text"
+          formControlName="name"
+          data-cy="profile-name"
+          autocomplete="username"
+          aria-required="true"
+          [attr.aria-invalid]="
+            form.get('name')?.invalid && form.get('name')?.touched
+          "
+        />
+        @if (form.get("name")?.invalid && form.get("name")?.touched) {
+          <span class="error-msg" data-cy="name-error"
+            >Le nom doit contenir au moins 3 caractères.</span
+          >
+        }
+      </div>
 
+      <div class="info-group">
+        <label for="profile-email"
+          >Adresse e-mail <span class="required">*</span></label
+        >
+        <input
+          id="profile-email"
+          type="email"
+          formControlName="email"
+          data-cy="profile-email"
+          autocomplete="email"
+          aria-required="true"
+          [attr.aria-invalid]="
+            form.get('email')?.invalid && form.get('email')?.touched
+          "
+        />
+        @if (form.get("email")?.invalid && form.get("email")?.touched) {
+          <span class="error-msg" data-cy="email-error"
+            >Veuillez saisir une adresse e-mail valide.</span
+          >
+        }
+      </div>
+
+      <div class="info-group">
+        <label for="profile-password">Nouveau mot de passe (optionnel)</label>
+        <input
+          id="profile-password"
+          type="password"
+          formControlName="password"
+          data-cy="profile-password"
+          autocomplete="new-password"
+          placeholder="••••••••"
+          [attr.aria-invalid]="
+            form.get('password')?.invalid && form.get('password')?.touched
+          "
+        />
+        @if (form.get("password")?.invalid && form.get("password")?.touched) {
+          <span class="error-msg" data-cy="password-error">
+            8 caractères minimum, une majuscule, une minuscule, un chiffre et un
+            caractère spécial.
+          </span>
+        }
+      </div>
+
+      <button
+        type="submit"
+        class="btn-save"
+        data-cy="profile-submit"
+        [disabled]="form.invalid || form.pristine"
+        aria-label="Enregistrer les modifications du profil"
+      >
+        Sauvegarder
+      </button>
+    </form>
+
+    <section class="subscriptions-section" aria-labelledby="subs-title">
+      <h2 id="subs-title">Abonnements</h2>
+      <div class="subscriptions-grid" role="list">
+        @for (sub of user.subscriptions; track sub.id) {
+          <app-theme-card
+            [id]="sub.id"
+            [title]="sub.title"
+            [description]="sub.description"
+            data-cy="subscription-item"
+          >
+            <button
+              action-button
+              class="btn-primary"
+              (click)="unsubscribe(sub.id)"
+              data-cy="unsubscribe-btn"
+              [attr.aria-label]="'Se désabonner du thème ' + sub.title"
+            >
+              Se désabonner
+            </button>
+          </app-theme-card>
+        } @empty {
+          <p class="no-subs" role="status" data-cy="no-subscriptions">
+            Vous n'êtes abonné à aucun thème.
+          </p>
+        }
+      </div>
+    </section>
   } @else {
-  <div class="loading" role="status" aria-live="polite">
-    <p>Chargement de vos informations...</p>
-  </div>
+    <div class="loading" role="status" aria-live="polite">
+      <p>Chargement de vos informations...</p>
+    </div>
   }
 </main>

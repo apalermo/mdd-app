@@ -5,9 +5,11 @@ describe('Logout Flow', () => {
   });
 
   it('should logout successfully and clear session cache', () => {
-    cy.get('nav').contains('Profil').click();
-    cy.contains('Se déconnecter').click();
+    cy.get('[data-cy=nav-profile]').click();
+    cy.get('[data-cy=nav-logout]').click();
+
     cy.url().should('eq', Cypress.config().baseUrl + '/');
+
     cy.visit('/articles', { failOnStatusCode: false });
     cy.url().should('not.include', '/articles');
     cy.url().should('include', '/login');
