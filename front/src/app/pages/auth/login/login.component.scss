@@ -1,64 +1,36 @@
 @use 'mixins' as *;
 
 .login-container {
-  @include flex-column(20px);
+  @include flex-column(var(--spacing-md));
   align-items: center;
   justify-content: center;
   min-height: 80vh; 
   padding: 20px;
-  position: relative;
-  
-  .back-button {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    
-    img {
-      width: 24px;
-      transition: transform 0.2s;
-      &:hover { transform: translateX(-4px); }
-    }
-  }
 
-  h1 {
-    margin-bottom: var(--spacing-xl);
-    font-size: 1.8rem;
+  h1 { 
+    margin-bottom: var(--spacing-md);
     color: var(--text-main);
   }
 
   form {
     width: 100%;
-    max-width: 380px; 
-    @include flex-column(20px);
+    max-width: 400px;
+    @include flex-column(15px);
 
     .form-group {
-      @include flex-column(8px);
+      @include flex-column(5px);
+      
+      label { @include label-base; }
 
-      label {
-        font-weight: 500;
-        font-size: 0.9rem;
-      }
+      input { @include input-base; }
 
-      input {
-        @include input-base;
-      }
+      .error-msg { @include error-message; }
     }
 
-    .error-message {
-      color: var(--danger-color);
-      font-size: 0.85rem;
-      text-align: center;
-    }
-
-    button[type="submit"] {
+    .btn-submit {
       @include button-primary;
       width: 100%;
       margin-top: 10px;
     }
-  }
-
-  @include mobile {
-    padding-top: 80px;
-    h2 { margin-bottom: 25px; }
   }
 }
