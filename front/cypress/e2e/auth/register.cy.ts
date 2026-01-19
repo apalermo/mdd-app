@@ -69,7 +69,10 @@ describe('Register Flow', () => {
 
     cy.wait('@registerConflict');
     cy.get('.global-toast').should('be.visible');
-    cy.get('.toast-content').should('contain', 'Cet email est déjà utilisé !');
+    cy.get('[data-cy=toast-content]').should(
+      'contain',
+      'Cet email est déjà utilisé !',
+    );
   });
 
   it('should show a generic notification for server error (500)', () => {
@@ -85,7 +88,7 @@ describe('Register Flow', () => {
 
     cy.wait('@serverError');
     cy.get('.global-toast').should('be.visible');
-    cy.get('.toast-content').should(
+    cy.get('[data-cy=toast-content]').should(
       'contain',
       'Une erreur inattendue est survenue',
     );

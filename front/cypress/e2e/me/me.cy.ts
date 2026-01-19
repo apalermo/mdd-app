@@ -10,7 +10,7 @@ describe('User Profile', () => {
     cy.get('[data-cy=profile-name]').clear().type(newName);
     cy.get('[data-cy=profile-submit]').click();
 
-    cy.get('.toast-content')
+    cy.get('[data-cy=toast-content]')
       .should('be.visible')
       .and('contain', 'Vos modifications ont été enregistrées !');
   });

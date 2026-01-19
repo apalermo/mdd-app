@@ -39,7 +39,10 @@ describe('Login Flow', () => {
 
     cy.wait('@loginRequest');
     cy.get('.global-toast').should('be.visible');
-    cy.get('.toast-content').should('contain', 'Identifiants invalides');
+    cy.get('[data-cy=toast-content]').should(
+      'contain',
+      'Identifiants invalides',
+    );
   });
 
   it('should show a generic notification for server error (500)', () => {
@@ -54,7 +57,7 @@ describe('Login Flow', () => {
 
     cy.wait('@serverError');
     cy.get('.global-toast').should('be.visible');
-    cy.get('.toast-content').should(
+    cy.get('[data-cy=toast-content]').should(
       'contain',
       'Une erreur inattendue est survenue',
     );

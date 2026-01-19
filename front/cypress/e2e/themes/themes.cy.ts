@@ -27,7 +27,7 @@ describe('Themes Subscriptions', () => {
     cy.visit('/themes');
     cy.wait('@getThemesError');
 
-    cy.get('.toast-content')
+    cy.get('[data-cy=toast-content]')
       .should('be.visible')
       .and('contain', 'Erreur lors du chargement des thèmes');
   });

@@ -37,7 +37,7 @@ describe('Article Detail & Comments', () => {
     cy.visit('/articles/999', { failOnStatusCode: false });
     cy.wait('@getArticleError');
     cy.get('.global-toast').should('be.visible');
-    cy.get('.toast-content').should('contain', 'Article non trouvé');
+    cy.get('[data-cy=toast-content]').should('contain', 'Article non trouvé');
   });
 
   it('should show error notification if posting comment fails (500)', () => {
@@ -52,7 +52,7 @@ describe('Article Detail & Comments', () => {
 
     cy.wait('@postCommentError');
     cy.get('.global-toast').should('be.visible');
-    cy.get('.toast-content').should(
+    cy.get('[data-cy=toast-content]').should(
       'contain',
       'Une erreur inattendue est survenue',
     );
