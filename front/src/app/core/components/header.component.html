@@ -5,6 +5,7 @@
         sessionService.isLogged() && showNavigation() ? '/articles' : '/'
       "
       (click)="closeMenu()"
+      data-cy="header-logo-link"
       aria-label="Retour à l'accueil"
     >
       <img src="logo.png" alt="MDD Logo" class="logo" />
@@ -12,66 +13,70 @@
   </div>
 
   @if (sessionService.isLogged() && showNavigation()) {
+    <button
+      #burgerBtn
+      class="burger-btn"
+      (click)="toggleMobileMenu()"
+      [attr.aria-expanded]="isMobileMenuOpen()"
+      data-cy="header-burger-menu"
+      aria-controls="main-navigation"
+      aria-label="Menu principal"
+    >
+      <span class="bar" aria-hidden="true"></span>
+      <span class="bar" aria-hidden="true"></span>
+      <span class="bar" aria-hidden="true"></span>
+    </button>
 
-  <button
-    #burgerBtn
-    class="burger-btn"
-    (click)="toggleMobileMenu()"
-    [attr.aria-expanded]="isMobileMenuOpen()"
-    aria-controls="main-navigation"
-    aria-label="Menu principal"
-  >
-    <span class="bar" aria-hidden="true"></span>
-    <span class="bar" aria-hidden="true"></span>
-    <span class="bar" aria-hidden="true"></span>
-  </button>
+    <nav
+      #navContainer
+      id="main-navigation"
+      class="navigation"
+      [class.active]="isMobileMenuOpen()"
+      aria-label="Navigation principale"
+    >
+      <ul class="nav-list">
+        @for (link of navLinks; track link.label) {
+          <li class="nav-item">
+            <a
+              [routerLink]="link.url"
+              routerLinkActive="active-link"
+              [attr.data-cy]="'nav-link-' + link.label"
+              (click)="closeMenu()"
+            >
+              {{ link.label }}
+            </a>
+          </li>
+        }
 
-  <nav
-    #navContainer
-    id="main-navigation"
-    class="navigation"
-    [class.active]="isMobileMenuOpen()"
-    aria-label="Navigation principale"
-  >
-    <ul class="nav-list">
-      @for (link of navLinks; track link.label) {
-      <li class="nav-item">
-        <a
-          [routerLink]="link.url"
-          routerLinkActive="active-link"
-          (click)="closeMenu()"
-        >
-          {{ link.label }}
-        </a>
-      </li>
-      }
+        <li class="nav-item profile-item">
+          <a
+            routerLink="/me"
+            routerLinkActive="active-link"
+            data-cy="nav-profile"
+            (click)="closeMenu()"
+            aria-label="Accéder à mon profil"
+          >
+            <span class="profile-text">Profil</span>
+            <span class="user-icon-wrapper" aria-hidden="true">👤</span>
+          </a>
+        </li>
 
-      <li class="nav-item profile-item">
-        <a
-          routerLink="/me"
-          routerLinkActive="active-link"
-          (click)="closeMenu()"
-          aria-label="Accéder à mon profil"
-        >
-          <span class="profile-text">Profil</span>
-          <span class="user-icon-wrapper" aria-hidden="true">👤</span>
-        </a>
-      </li>
+        <li class="nav-item logout-item">
+          <button
+            type="button"
+            class="logout-link-btn"
+            data-cy="nav-logout"
+            (click)="logOut()"
+            aria-label="Se déconnecter de l'application"
+          >
+            Se déconnecter
+          </button>
+        </li>
+      </ul>
+    </nav>
 
-      <li class="nav-item logout-item">
-        <button
-          type="button"
-          class="logout-link-btn"
-          (click)="logOut()"
-          aria-label="Se déconnecter de l'application"
-        >
-          Se déconnecter
-        </button>
-      </li>
-    </ul>
-  </nav>
-
-  @if (isMobileMenuOpen()) {
-  <div class="overlay" (click)="closeMenu()" aria-hidden="true"></div>
-  } }
+    @if (isMobileMenuOpen()) {
+      <div class="overlay" (click)="closeMenu()" aria-hidden="true"></div>
+    }
+  }
 </header>
