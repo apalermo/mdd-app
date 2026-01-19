@@ -22,7 +22,15 @@ export class RegisterComponent {
   public readonly registerForm = this.fb.nonNullable.group({
     name: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(3)]],
+    password: [
+      '',
+      [
+        Validators.required,
+        Validators.pattern(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        ),
+      ],
+    ],
   });
 
   public onSubmit(): void {

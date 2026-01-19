@@ -44,14 +44,14 @@ describe('RegisterComponent', () => {
     const validRequest: RegisterRequest = {
       email: 'new@test.com',
       name: 'NewUser',
-      password: 'password123',
+      password: 'Password123!',
     };
     const mockResponse = { token: 'new-token-123' };
     component.registerForm.setValue(validRequest);
 
     mockAuthService.register.mockReturnValue(of(mockResponse));
     mockSessionService.logIn.mockReturnValue(
-      of({ id: 1, email: 'new@test.com' })
+      of({ id: 1, email: 'new@test.com' }),
     );
 
     component.onSubmit();
@@ -63,7 +63,7 @@ describe('RegisterComponent', () => {
 
   it('should have a link to login page', () => {
     const loginLink = fixture.debugElement.query(
-      By.css('a[routerLink="/login"]')
+      By.css('a[routerLink="/login"]'),
     );
     expect(loginLink).toBeTruthy();
   });

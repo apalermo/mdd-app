@@ -9,7 +9,9 @@
     aria-label="Formulaire d'inscription"
   >
     <div class="form-group">
-      <label for="name">Nom d'utilisateur</label>
+      <label for="name"
+        >Nom d'utilisateur <span class="required">*</span></label
+      >
       <input
         id="name"
         type="text"
@@ -22,7 +24,7 @@
     </div>
 
     <div class="form-group">
-      <label for="email">Adresse e-mail</label>
+      <label for="email">Adresse e-mail <span class="required">*</span></label>
       <input
         id="email"
         type="email"
@@ -33,10 +35,18 @@
           registerForm.get('email')?.touched
         "
       />
+      @if (
+        registerForm.get("email")?.errors?.["email"] &&
+        registerForm.get("email")?.touched
+      ) {
+        <span class="error-msg"
+          >Veuillez saisir une adresse e-mail valide.</span
+        >
+      }
     </div>
 
     <div class="form-group">
-      <label for="password">Mot de passe</label>
+      <label for="password">Mot de passe <span class="required">*</span></label>
       <input
         id="password"
         type="password"
@@ -47,6 +57,15 @@
           registerForm.get('password')?.touched
         "
       />
+      @if (
+        registerForm.get("password")?.invalid &&
+        registerForm.get("password")?.touched
+      ) {
+        <span class="error-msg">
+          Le mot de passe doit comporter 8 caractères minimum, une majuscule,
+          une minuscule, un chiffre et un caractère spécial.
+        </span>
+      }
     </div>
 
     <button
