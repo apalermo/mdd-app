@@ -37,12 +37,13 @@
     .form-group {
       @include flex-column(var(--spacing-sm));
 
+      label { @include label-base; }
+
       .custom-input,
       .custom-textarea {
         @include input-base;
       }
 
-      // Reset appearance and enforce custom arrow for mobile cross-browser consistency
       .custom-select {
         @include input-base;
         appearance: none; 
@@ -59,6 +60,8 @@
         min-height: 200px;
         resize: vertical;
       }
+
+      .error-msg { @include error-message; }
     }
 
     .form-actions {
