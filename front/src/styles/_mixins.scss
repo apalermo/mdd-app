@@ -60,6 +60,29 @@
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px var(--border-focus);
   }
+  
+  &.ng-invalid.ng-touched {
+    border-color: var(--danger-color);
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
+    }
+  }
+}
+
+@mixin label-base {
+  font-weight: bold;
+  font-size: 0.9rem;
+
+  .required {
+    color: var(--danger-color);
+    margin-left: 2px;
+  }
+}
+
+@mixin error-message {
+  color: var(--danger-color);
+  font-size: 0.75rem;
+  margin-top: 4px;
 }
 
 @mixin button-primary {
