@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ThemeService } from '../../core/services/theme.service';
 import { SessionService } from '../../core/services/session.service';
 import { UserService } from '../../core/services/user.service';
+import { NotificationService } from '../../core/services/notification.service'; // Ajout de l'import
 import { Theme } from '../../models/theme.interface';
 import { Observable } from 'rxjs';
 import { ThemeCardComponent } from '../../shared/components/theme-card/theme-card.component';
@@ -19,6 +20,7 @@ export class ThemesComponent {
   private readonly themeService = inject(ThemeService);
   private readonly sessionService = inject(SessionService);
   private readonly userService = inject(UserService);
+  private readonly notificationService = inject(NotificationService);
   private readonly destroyRef = inject(DestroyRef);
 
   public themes$: Observable<Theme[]> = this.themeService.getThemes();
@@ -38,9 +40,7 @@ export class ThemesComponent {
       .subscribe({
         next: () => {
           this.refreshSession();
-        },
-        error: (err) => {
-          console.error("Erreur lors de l'abonnement:", err);
+          this.notificationService.show('Abonnement pris en compte.');
         },
       });
   }
@@ -51,8 +51,6 @@ export class ThemesComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (updatedUser) => this.sessionService.updateUser(updatedUser),
-        error: (err) =>
-          console.error('Impossible de rafraîchir le profil', err),
       });
   }
 }
