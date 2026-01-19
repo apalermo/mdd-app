@@ -17,6 +17,7 @@
         type="text"
         formControlName="name"
         autocomplete="username"
+        data-cy="register-name"
         aria-required="true"
         [attr.aria-invalid]="
           registerForm.get('name')?.invalid && registerForm.get('name')?.touched
@@ -31,6 +32,7 @@
         type="email"
         formControlName="email"
         autocomplete="email"
+        data-cy="register-email"
         aria-required="true"
         [attr.aria-invalid]="
           registerForm.get('email')?.invalid &&
@@ -54,6 +56,7 @@
         type="password"
         formControlName="password"
         autocomplete="new-password"
+        data-cy="register-password"
         aria-required="true"
         [attr.aria-invalid]="
           registerForm.get('password')?.invalid &&
@@ -75,6 +78,7 @@
       type="submit"
       [disabled]="registerForm.invalid"
       class="btn-submit"
+      data-cy="register-submit"
       aria-label="Créer mon compte"
     >
       S'inscrire
@@ -84,7 +88,10 @@
   <nav class="auth-links" aria-label="Liens alternatifs d'authentification">
     <p>
       Déjà un compte ?
-      <a routerLink="/login" aria-label="Aller vers la page de connexion"
+      <a
+        routerLink="/login"
+        data-cy="register-to-login"
+        aria-label="Aller vers la page de connexion"
         >Se connecter</a
       >
     </p>
