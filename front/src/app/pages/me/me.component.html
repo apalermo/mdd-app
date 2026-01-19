@@ -18,6 +18,7 @@
           id="profile-name"
           type="text"
           formControlName="name"
+          data-cy="profile-name"
           autocomplete="username"
           aria-required="true"
           [attr.aria-invalid]="
@@ -25,7 +26,7 @@
           "
         />
         @if (form.get("name")?.invalid && form.get("name")?.touched) {
-          <span class="error-msg"
+          <span class="error-msg" data-cy="name-error"
             >Le nom doit contenir au moins 3 caractères.</span
           >
         }
@@ -39,6 +40,7 @@
           id="profile-email"
           type="email"
           formControlName="email"
+          data-cy="profile-email"
           autocomplete="email"
           aria-required="true"
           [attr.aria-invalid]="
@@ -46,7 +48,7 @@
           "
         />
         @if (form.get("email")?.invalid && form.get("email")?.touched) {
-          <span class="error-msg"
+          <span class="error-msg" data-cy="email-error"
             >Veuillez saisir une adresse e-mail valide.</span
           >
         }
@@ -58,6 +60,7 @@
           id="profile-password"
           type="password"
           formControlName="password"
+          data-cy="profile-password"
           autocomplete="new-password"
           placeholder="••••••••"
           [attr.aria-invalid]="
@@ -65,7 +68,7 @@
           "
         />
         @if (form.get("password")?.invalid && form.get("password")?.touched) {
-          <span class="error-msg">
+          <span class="error-msg" data-cy="password-error">
             8 caractères minimum, une majuscule, une minuscule, un chiffre et un
             caractère spécial.
           </span>
@@ -75,6 +78,7 @@
       <button
         type="submit"
         class="btn-save"
+        data-cy="profile-submit"
         [disabled]="form.invalid || form.pristine"
         aria-label="Enregistrer les modifications du profil"
       >
@@ -90,18 +94,22 @@
             [id]="sub.id"
             [title]="sub.title"
             [description]="sub.description"
+            data-cy="subscription-item"
           >
             <button
               action-button
               class="btn-primary"
               (click)="unsubscribe(sub.id)"
+              data-cy="unsubscribe-btn"
               [attr.aria-label]="'Se désabonner du thème ' + sub.title"
             >
               Se désabonner
             </button>
           </app-theme-card>
         } @empty {
-          <p class="no-subs" role="status">Vous n'êtes abonné à aucun thème.</p>
+          <p class="no-subs" role="status" data-cy="no-subscriptions">
+            Vous n'êtes abonné à aucun thème.
+          </p>
         }
       </div>
     </section>

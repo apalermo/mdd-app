@@ -1,15 +1,25 @@
 <div class="home-container">
   <div class="logo-wrapper">
-    <img src="logo.png" alt="Logo MDD" class="logo" />
+    <img src="logo.png" alt="Logo MDD" class="logo" data-cy="home-logo" />
   </div>
 
   <h1 class="sr-only">Accueil - Monde de Dév</h1>
 
   <div class="actions">
-    <button type="button" routerLink="/login" class="btn btn-primary">
+    <button
+      type="button"
+      routerLink="/login"
+      class="btn btn-primary"
+      data-cy="home-login-btn"
+    >
       Se connecter
     </button>
-    <button type="button" routerLink="/register" class="btn btn-secondary">
+    <button
+      type="button"
+      routerLink="/register"
+      class="btn btn-secondary"
+      data-cy="home-register-btn"
+    >
       S'inscrire
     </button>
   </div>

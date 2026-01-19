@@ -4,13 +4,13 @@ describe('Home Page', () => {
   });
 
   it('should display the logo and navigation buttons', () => {
-    cy.get('img.logo').should('be.visible');
-    cy.contains('button', 'Se connecter').should('be.visible');
-    cy.contains('button', "S'inscrire").should('be.visible');
+    cy.get('[data-cy=home-logo]').should('be.visible');
+    cy.get('[data-cy=home-login-btn]').should('be.visible');
+    cy.get('[data-cy=home-register-btn]').should('be.visible');
   });
 
   it('should navigate to login page via button', () => {
-    cy.contains('button', 'Se connecter').click();
+    cy.get('[data-cy=home-login-btn]').click();
     cy.url().should('include', '/login');
   });
 });
