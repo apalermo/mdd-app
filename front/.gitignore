@@ -43,3 +43,7 @@ Thumbs.db
 
 # Cypress
 cypress.env.json
+
+# Cypress artifacts
+cypress/screenshots/
+cypress/videos/
