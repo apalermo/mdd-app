@@ -130,6 +130,9 @@
                         <exclude>**/MddApiApplication.class</exclude>
                         <exclude>**/configuration/**</exclude>
                         <exclude>**/entities/**</exclude>
+                        <exclude>**/mappers/**</exclude>
+                        <exclude>**/exceptions/**</exclude>
+                        <exclude>**/advice/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -183,7 +186,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-XX:+EnableDynamicAgentLoading</argLine>
+                    <argLine>@{argLine} -XX:+EnableDynamicAgentLoading</argLine>
                 </configuration>
             </plugin>
         </plugins>
