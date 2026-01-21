@@ -1,25 +1,90 @@
-# P6-Full-Stack-reseau-dev
+# MDD - Monde de Dév
 
-## Front
+## 📝 Présentation du projet
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.1.3.
+L'application **MDD** (Monde de Dév) est une plateforme de réseau social conçue pour les développeurs de l'entreprise **ORION**. Elle permet de centraliser la veille technologique grâce à un système d'abonnement à des thèmes, de publication d'articles et d'échanges par commentaires.
 
-Don't forget to install your node_modules before starting (`npm install`).
+## 🛠 Stack Technique
 
-### Development server
+| Composant    | Technologie          | Version / Détails                  |
+| :----------- | :------------------- | :--------------------------------- |
+| **Backend**  | Java / Spring Boot 3 | API RESTful, Spring Security (JWT) |
+| **Frontend** | Angular 20           | Signals, NGRX, Lazy-loading (100%) |
+| **Database** | MySQL 8              | Architecture relationnelle         |
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+---
 
-### Build
+## 🚀 Installation et Configuration
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+### 1. Prérequis
 
-### Where to start
+- **Java 21** installé.
+- **Node.js** (version LTS) et **Angular CLI**.
+- Instance **MySQL 8** opérationnelle.
 
-As you may have seen if you already started the app, a simple home page containing a logo, a title and a button is available. If you take a look at its code (in the `home.component.html`) you will see that an external UI library is already configured in the project.
+### 2. Base de données
 
-This library is `@angular/material`, it's one of the most famous in the angular ecosystem. As you can see on their docs (https://material.angular.io/), it contains a lot of highly customizable components that will help you design your interfaces quickly.
+Initialisez votre base de données en exécutant les commandes suivantes :
 
-Note: I recommend to use material however it's not mandatory, if you prefer you can get rid of it.
+```sql
+CREATE DATABASE mdd_db;
+CREATE USER 'mdd_user'@'localhost' IDENTIFIED BY 'votre_mot_de_passe';
+GRANT ALL PRIVILEGES ON mdd_db.* TO 'mdd_user'@'localhost';
+FLUSH PRIVILEGES;
+```
 
-Good luck!
+### 3. Variables d'environnement
+
+Configurez les clés suivantes dans votre environnement ou votre IDE :
+
+- `DB_HOST`: localhost
+- `DB_PORT`: 3306
+- `DB_NAME`: mdd_db
+- `DB_USERNAME`: mdd_user
+- `DB_PASSWORD`: votre_mot_de_passe
+- `TOKEN_SECRET`: [votre_cle_secrete_pour_jwt]
+
+---
+
+## 🏃 Lancement de l'application
+
+### Backend
+
+```bash
+cd back
+./mvnw clean install
+./mvnw spring-boot:run
+```
+
+- **Swagger UI** : Accédez à la documentation interactive de l'API sur `http://localhost:8080/swagger-ui.html`.
+
+### Frontend
+
+```bash
+cd front
+npm install
+npm start
+```
+
+_L'interface est accessible sur `http://localhost:4200`._
+
+---
+
+## 🧪 Tests et Rapports de Couverture
+
+Le projet respecte un haut standard de qualité avec une couverture bien supérieure au minimum requis de 70%.
+
+### Génération des rapports (Global)
+
+- **Backend** : **92%** de couverture (JUnit 5 / JaCoCo). Exécutez `./mvnw clean verify` pour générer le rapport dans `target/site/jacoco/index.html`.
+- **Frontend** : **91%** de couverture (**Vitest** / Cypress).
+  - Tests unitaires : `npm run test:coverage` (Rapport dans `coverage/index.html`).
+  - Tests E2E : `npx cypress run` (Cypress).
+
+---
+
+## 📂 Liens et Documentation
+
+- [**Architecture & Justifications**](./ARCHITECTURE.md) : Détails sur les patterns (SOLID, DRY) et choix techniques.
+- [**Documentation Frontend**](./front/README.md) : Spécifications de l'application Angular et guides de développement
+- [**Documentation API (Backend)**](./back/README.md) : Liste exhaustive des endpoints et spécifications techniques.
