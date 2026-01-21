@@ -1,59 +1,62 @@
-# Front
+# MDD App - Documentation Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.4.
+## 🛠 Spécifications Techniques
 
-## Development server
+- **Framework** : Angular 20
+- **Gestion d'état** : NGRX & Signals
+- **Performance** : Lazy-loading implémenté sur 100% des routes
+- **Style** : SCSS avec architecture modulaire et variables centralisées
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
-```
+## 📂 Organisation du Code
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+L'application est structurée pour favoriser la réutilisabilité (principes DRY) :
 
-## Code scaffolding
+- **`src/app/core`** : Contient les éléments transversaux (Services d'authentification, Guards, Interceptors JWT).
+- **`src/app/pages`** : Regroupe les composants de vue principaux (Articles, Thèmes, Profil utilisateur).
+- **`src/app/shared`** : Centralise les composants réutilisables, comme la `theme-card` utilisée sur plusieurs écrans pour éviter la duplication de logique.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+---
 
-```bash
-ng generate component component-name
-```
+## 🏃 Lancement et Build
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+### 1. Installation
 
 ```bash
-ng build
+npm install
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### 2. Développement
 
 ```bash
-ng test
+npm start
 ```
 
-## Running end-to-end tests
+L'application est servie sur `http://localhost:4200/`.
 
-For end-to-end (e2e) testing, run:
+### 3. Production
 
 ```bash
-ng e2e
+npm run build
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+---
 
-## Additional Resources
+## 🧪 Qualité et Tests
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Le projet affiche une couverture de **91%** sur la partie interface.
+
+### Tests Unitaires (Vitest)
+
+Nous avons remplacé Karma par **Vitest** pour gagner en performance et en fiabilité lors des tests de composants.
+
+- **Lancer les tests** : `npm test`
+- **Rapport de couverture** : `npm run test:coverage` (Génère le dossier `/coverage`).
+
+### Tests E2E (Cypress)
+
+Utilisé pour valider les parcours utilisateurs critiques (Connexion, Publication, Abonnement).
+
+- **Mode console** : `npx cypress run`
+- **Interface visuelle** : `npx cypress open`

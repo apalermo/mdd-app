@@ -3,25 +3,37 @@ oc:
     jwt:
       expirationMs: 86400000
       secret: ${TOKEN_SECRET}
+
 spring:
   application:
     name: mdd-api
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+
+  sql:
+    init:
+      schema-locations: classpath:sql/schema.sql
+      data-locations: classpath:sql/data.sql
+      mode: always
+
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: false
     properties:
       hibernate:
         format_sql: true
+
   jackson:
     property-naming-strategy: SNAKE_CASE
+
 springdoc:
   show-javadoc: true
+
 logging:
   level:
     root: INFO
